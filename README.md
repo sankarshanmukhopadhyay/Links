@@ -8,7 +8,7 @@ Artificial Intelligences (AIs) are modelled on the brain. In a social species li
 The village is the next-higher level of information processing. It is the natural repository of common sense, of culture. 
 
 AIs routinely make gaffes that would be a source of bemusement, shock, or ridicule in a village. 
-Villages are reputation economies where gaffes are consequential. For people, gaffes are associated with the sting of shame. 
+Villages are reputation economies where gaffes have consequences. For people, gaffes are associated with the sting of shame. 
 Shame is a deep learning event that re-wires the brain.
 
 Collectively, the village is policing a set of norms. 
