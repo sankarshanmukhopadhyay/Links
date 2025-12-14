@@ -11,7 +11,7 @@ The village is the next-higher level of information processing. It is the natura
 AIs routinely make gaffes that would be a source of bemusement, shock, or ridicule in a village. 
 A village is a reputation economy, where gaffes have consequences. 
 For mortals like you and me, social gaffes are associated with the sting of shame. 
-Shame is a deep learning experience that re-wires the brain.
+Shame is a deep learning experience that re-wires the brain. 
 
 Collectively, the village is policing a set of norms. 
 In this world, each individual must try to find a balance between compliance and ambition.
