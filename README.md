@@ -12,27 +12,27 @@ Villages are reputation economies where gaffes have consequences. For people, ga
 Shame is a deep learning experience that re-wires the brain.
 
 Collectively, the village is policing a set of norms. 
-Individuals try to find a balance between compliance and ambition.
-In doing so, individuals push against the norms, and sometimes change them. Norms evolve. 
+In this world, each individual must try to find a balance between compliance and ambition.
+Sometimes individuals push up against the expectations of the village and manage to change the accepted norms. Norms can evolve. 
 
 Human brains grow to maturity inside the reputation economy of a village. 
 As they do so, the brains develop constraints that guard against loss of prestige - the currency of the village. 
 AIs are not yet guarding their reputation in this way. 
-They don't develop the set of commonsense constraints, and they seem stupid.
+They don't develop the set of commonsense constraints, and often they seem stupid. In the project, we have come to believe that AGI is social.
 
 ### Goals
 This project is motivated by an attempt to:
-- Address bottlenecks in AI development including alignment, hallucination, and jagged intelligence
+- Address bottlenecks in AI development including alignment, context drift, and jagged intelligence
 - Harden human communties against highly capable, and potentially malign AIs
-- Create a new/old toolkit for, and new/old ways of thinking about:
+- Create a new/old toolkit for thinking about:
   - Identity
   - Reputation
   - Social connection
-  - Connection weights
-  - Villages
-    - Norms. Evolution of sets of norms
-    - Village defences
-    - Village opportunties. Search in the social graph.
+  - Connection weights, and
+  - Villages, including:
+    - Norms and the evolution of sets of norms
+    - Village defences, and
+    - Village opportunity, leveraging search in the social graph.
 
 ### Architecture
 The project aims to build a type of decentralized agent that can:
