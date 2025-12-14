@@ -12,7 +12,7 @@ Villages are reputation economies where gaffes have consequences. For people, ga
 Shame is a deep learning experience that re-wires the brain.
 
 Collectively, the village is policing a set of norms. 
-Individuals try to balance between compliance and ambition.
+Individuals try to find a balance between compliance and ambition.
 In doing so, individuals push against the norms, and sometimes change them. Norms evolve. 
 
 Human brains grow to maturity inside the reputation economy of a village. 
