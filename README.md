@@ -16,19 +16,19 @@ Shame is a deep learning experience that re-wires the brain.
 
 Collectively, the village is policing a set of norms. 
 In this world, each individual must find a balance between compliance and ambition.
-Sometimes, individuals or coalitions push up against the conservative expectations of the village and manage to change the accepted norms. Norms can evolve. 
+Sometimes, individuals or coalitions of individuals push up against the conservative expectations of the village and manage to change the accepted norms. Norms can evolve. 
 
 Human brains grow to maturity inside the reputation economy of a village. 
-As they do so, the brains develop constraints that guard against loss of prestige. In the village, prestige is currency. 
+As they do so, the brains develop constraints that guard against loss of prestige. In a village, prestige is currency. 
 AIs are not yet guarding their reputation in this way. 
 They don't develop the set of commonsense constraints, and often they seem stupid. 
 
 Part of the premise of this project is that social constrains will form a useful training franework for AI. 
 We believe the future will include a type of AI that knows its reputation is an asset, and that will have a digital equivalent of shame as part of its reward function. 
-We believe such an AI will have better access to the slippery notion of 'common sense,' will seem less stupid, an is a better chance if aligning its behaviour with village norms.
+We believe such an AI will have better access to the slippery notion of 'common sense'. We think such an AI will seem less stupid, and is a better chance if aligning its behaviour with village norms.
 
 But we are not proposing to work on such an AI as a first order of business. 
-Instead we want to discover what is universal about human reputation systems and develop a common architecture to support then.
+Instead we want to discover what is universal about human reputation systems and develop a common architecture to support those systems.
 
 ### Goals
 This project is motivated by an attempt to:
