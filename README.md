@@ -6,7 +6,7 @@ www.village.link
 
 ### Villages and Artificial Intelligence
 AIs are modelled on the brain. In a social species like our own, brains are organised into communities, into villages. 
-The village is the next-higher-up level of information processing after the brain. It is the natural repository of common sense, of culture. 
+The village is the next-higher-up level of information processing, after the brain. It is the natural repository of common sense, of culture. 
 
 AIs routinely make gaffes that would be a source of bemusement, shock, or ridicule in a village. 
 A village is a reputation economy where gaffes have consequences. 
@@ -19,13 +19,17 @@ In this world, each individual must find a balance between compliance and ambiti
 Sometimes, individuals or coalitions of individuals push up against the conservative expectations of the village and manage to change the accepted norms. Norms evolve. 
 
 Human brains grow to maturity inside the reputation economy of a village. 
-As they do so, the brains develop constraints that guard against loss of prestige. In a village, prestige is currency. 
-AIs are not yet guarding their reputation in this way. 
+As they do so, the brains develop constraints that guard against loss of prestige. 
+It is telling that teenagers can be acutely vulnerable to shame. 
+They are learning the rules.
+
+The current generation of AIs do not yet guard their reputation in this way. 
 They don't develop the set of commonsense constraints, and often they seem stupid. 
 
 One of the premises of this project is that social constrains will form a useful training framework for AI. 
 We believe the future will include a type of AI that knows its reputation is an asset, and that will have a digital equivalent of shame as part of its reward function. 
-We believe such an AI will have better access to the slippery notion of 'common sense'. We think such an AI will seem less stupid, and is a better chance of aligning its behaviour with village norms.
+We believe such an AI will have better access to the slippery notion of 'common sense'. 
+We think such an AI will seem less stupid, and is a better chance of aligning its behaviour with village norms.
 
 But we are not proposing to work on such an AI as a first order of business. 
 Instead we want to discover what is universal about human reputation systems and develop a common architecture to support those systems.
@@ -43,7 +47,7 @@ This project is motivated by an attempt to:
        * Norms, and the evolution of sets of norms
        * Village defences
        * Non-zero sum opportunities that leverage both search and reputation in the social graph
-       * Frameworks to support work on hard problems of coordinated action.
+       * Support for work on hard problems of coordinated action.
 
 ### Architecture
 The project aims to build a type of decentralized agent that can:
