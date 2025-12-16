@@ -6,7 +6,7 @@ www.village.link (This link will become the front page. Currently it points stra
 
 ### Villages and Artificial Intelligence
 AIs are modelled on the brain. In a social species like our own, brains are organised into communities, into villages. 
-The village is the next-higher-up level of information processing, after the brain. It is the natural repository of common sense, of culture. 
+The village is the next-higher-up level of information processing after the brain. It is the natural repository of common sense, of culture. 
 
 AIs routinely make gaffes that would be a source of bemusement, shock, or ridicule in a village. 
 A village is a reputation economy where gaffes have consequences. 
@@ -16,7 +16,7 @@ Shame is a deep learning experience that re-wires the brain.
 
 Collectively, the village is policing a set of norms. 
 In this world, each individual must find a balance between compliance and ambition.
-Sometimes, individuals or coalitions of individuals push up against the conservative expectations of the village and manage to change the accepted norms. Norms evolve. 
+Sometimes, individuals or coalitions of individuals push up against the village and manage to change its conservative expectations. Norms evolve. 
 
 Human brains grow to maturity inside the reputation economy of a village. 
 As they do so, the brains develop constraints that guard against loss of prestige. 
@@ -26,8 +26,8 @@ They are learning the rules.
 The current generation of AIs do not yet guard their reputation in this way. 
 They don't develop the set of commonsense constraints, and often they seem stupid. 
 
-One of the premises of this project is that social constrains will form a useful training framework for AI. 
-We believe the future will include a type of AI that knows its reputation is an asset, and that will have a digital equivalent of shame as part of its reward function. 
+One of the premises of this project is that social constraints will form a useful training framework for AI. 
+We believe the future will include a type of AI that knows its reputation is an asset, and that will have in its reward function a digital equivalent of shame. 
 We believe such an AI will have better access to the slippery notion of 'common sense'. 
 We think such an AI will seem less stupid, and is a better chance of aligning its behaviour with village norms.
 
@@ -69,3 +69,25 @@ To do this, the project will harvest examples from existing reputation systems.
 Many types already exist, and some are in the public domain.
 In using this data, the project does not have to capture every nuance. 
 Instead, it just needs to capture a few key 'seed' features, and ensure that the system is evolvable.
+
+### Reputation, rudimentary and not-so-rudimentary
+There are many places online where Bob can call attention to Alice using the _@Alice_ convention. 
+If Alice wishes to reply, she can use _@Bob_. 
+Now Bob's agent can make the reputational claim, "I have a connection to Alice, and here's evidence."
+
+But imagine Bob has an existing, robust, connection to Alice, and he asks about Carol.
+
+Alice comes back: "Yeah, Carol is a babe. 
+She's _this Carol_ in the village called **Wikipedia.Admins.en** and she's _this Carol_ in the village called **GitHub.PythonProjects** and she's _this Carol_ the **YouTuber**."
+Bob's agent can assess Alice's claims in the graph of hundreds or thousands of Carol's connections. (Or rather, amongst those of her connections who will talk to Bob).
+But also, in assessing Alice's claims, Bob's agent now has access to all of the not-insignificant reputational architecture of Wikipedia, GitHub, YouTube, and so on.
+
+At this point, Bob is somewhat intimidated by Carol, but he is incentivised to reach out to her because he knows she will definitely have the answer to his current, thorny, problem X. 
+Also that if he can establish a connection with her it will bolster his own reputation.
+Bob has risk around the possibility that Carol's agent will block his approach, and even a worse risk that it will publish the fact that the approach was blocked. 
+These are the punishment straegies of the village. Bob needs to assess his risk in the light of his own prestige. 
+
+(But she's a Wikipeida Admin, right? Aren't they bottomlessly generous?)
+
+Note that it really does not matter whether or not any of these charatcters are AIs. Whether digital life or wet life, they are constrained by the reputation economy. 
+Digital or wet, their ultimate needs are energy and media - needs where the reputation economy is the gatekeeper.
