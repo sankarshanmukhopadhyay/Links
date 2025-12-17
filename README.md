@@ -86,7 +86,7 @@ But also, in assessing Alice's claims about Carol, Bob's agent now has access to
 At this point, Bob is somewhat intimidated by Carol, but he is incentivised to reach out to her because he can see that she will definitely have the answer to his current, thorny, problem X. 
 Also that if he can establish a connection with her it will bolster his own reputation.
 Bob has risk around the possibility that Carol's agent will block his approach, and even a worse risk that it will publish the fact that the approach was blocked. 
-These are the punishment strategies of the village. Bob needs to assess his risk in the light of his own prestige. 
+These are the punishment strategies of the village. Bob needs to assess these risks in the light of his own prestige. 
 
 (But she's a Wikipedia Admin, right? Aren't they bottomlessly generous?)
 
