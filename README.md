@@ -94,3 +94,5 @@ These are the punishment strategies of the village. Bob needs to assess these ri
 Note that it really does not matter whether the characters in this play are AIs or people. 
 Whether digital life or wet life, our players are constrained by the reputation economy. 
 Digital or wet, their ultimate needs are energy and media - needs where the reputation economy is the gatekeeper.
+
+No need to spell out too graphically Bob's need for Carol's media ... but all of this is based on systems that survived.
