@@ -46,7 +46,7 @@ This project is motivated by an attempt to:
    * Villages, including
        * Norms, and the evolution of sets of norms
        * Village defences
-       * Non-zero sum opportunities that leverage both search and reputation in the social graph
+       * Non-zero sum transactional opportunities that leverage both search and reputation in the social graph
        * Support for work on hard problems of coordinated action.
 
 ### Architecture
