@@ -52,7 +52,7 @@ This project is motivated by an attempt to:
 ### Architecture
 The project aims to build a type of decentralized agent that can:
 1. Store reputational information
-1. Make reputational claims about itself (identity claims,) and about others
+1. Make reputational claims about itself, (identity claims) and about others
 1. Assess the reputational claims of others by checking its own data store, and by querying the social graph
 1. Seek out or shut down connections based on reputation.
 
@@ -80,7 +80,7 @@ Next imagine that Bob has an existing, robust, connection to Alice, and he asks 
 
 Alice comes back: "Yeah, Carol is a babe. 
 She's _this Carol_ in the village called **Wikipedia.Admins.en** and she's _this Carol_ in the village called **GitHub.PythonProjects** and she's _this Carol_ the **YouTuber**."
-Bob's agent can assess Alice's claims in the graph of hundreds or thousands of Carol's connections. Or rather, amongst those of her connections who will talk to Bob.
+Bob's agent can assess Alice's claims in the graph of Carol's connections. Or rather, amongst those of Carol's connections who will talk to Bob.
 But also, in assessing Alice's claims about Carol, Bob's agent now has access to all of the not-insignificant reputational architecture of Wikipedia, GitHub, YouTube, and so on.
 
 At this point, Bob is somewhat intimidated by Carol, but he is incentivised to reach out to her because he can see that she will definitely have the answer to his current, thorny, problem X. 
