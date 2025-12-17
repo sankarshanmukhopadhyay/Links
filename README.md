@@ -74,7 +74,7 @@ Instead, it just needs to capture a few key 'seed' features, and ensure that the
 ### Reputation, rudimentary and not-so-rudimentary
 There are many places online where Bob can call attention to Alice using the _@Alice_ convention. 
 If Alice wishes to reply, she can use _@Bob_. 
-Now Bob's agent can make the reputational claim, "I have a connection to Alice, and here's the link to evidence."
+With this data in the public domain, Bob's agent can make the reputational claim, "I have a connection to Alice, and here's the link to evidence."
 
 Next imagine that Bob has an existing, robust, connection to Alice, and he asks about Carol.
 
