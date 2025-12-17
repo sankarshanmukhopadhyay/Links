@@ -75,7 +75,7 @@ Instead, it just needs to capture a few key 'seed' features, and ensure that the
 There are many places online where Bob can call attention to Alice using the _@Alice_ convention. 
 If Alice wishes to reply, she can use _@Bob_. 
 Once this data is in the public domain, Bob's agent can make the reputational claim, "I have a connection to Alice, and here's the link to evidence."
-In isolation, this claim is shot through with a thousand cryptographic holes.
+In isolation, this claim is shot-through with a thousand cryptographic holes.
 
 Next imagine that Bob has an existing, robust, connection to Alice, and he asks about Carol.
 
