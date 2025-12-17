@@ -82,7 +82,7 @@ Next imagine that Bob has an existing, robust, connection to Alice, and he asks 
 Alice comes back: "Yeah, Carol's a babe. 
 She is <ins>this Carol</ins> in the village called **Wikipedia.Admins.en** and she is <ins>this Carol</ins> in the village called **GitHub.PythonProjects** and she is <ins>this Carol</ins>, the **YouTuber**."
 Bob's agent can assess Alice's claims in the graph of Carol's connections ... or rather, amongst those of Carol's connections who will talk to Bob.
-But also, in assessing Alice's claims about Carol, Bob's agent now has access to all of the not-insignificant reputational architecture of Wikipedia, GitHub, YouTube, and so on.
+But also, in assessing Alice's claims about Carol, Bob's agent now has access to all of the not-insignificant reputational architecture of Wikipedia, GitHub, YouTube, and maybe more.
 
 At this point, Bob is somewhat intimidated by Carol, but he has an incentive to contact her because he can see that she will definitely have the answer to his current, thorny, problem X. 
 Also that if he can establish a connection with her it will bolster his own reputation.
