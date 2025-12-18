@@ -75,7 +75,7 @@ Instead, it just needs to capture a few key 'seed' features, and ensure that the
 There are many places online where Bob can call attention to Alice using the _@Alice_ convention. 
 If Alice wishes to reply, she can use _@Bob_. 
 Once this data is in the public domain, Bob's agent can make the reputational claim, "I have a connection to Alice, and here's the link to evidence."
-In isolation, this claim is shot-through with a thousand cryptographic holes.
+In isolation, this does not amount to much, but it's part of a web.
 
 Next imagine that Bob has an existing, robust, connection to Alice, and he asks about Carol.
 
@@ -91,6 +91,15 @@ These are the punishment strategies of the village. Bob needs to assess these ri
 
 (But she's a Wikipedia admin, right? Aren't they bottomlessly generous?)
 
-Note that it really does not matter whether the characters in this play are AIs or people. 
+### Privacy
+
+Carol has accepted that she will be make reputational statements *in public* whenever she uses Wikipedia, GitHub, or YouTube. 
+She is most likely also a member of some private villages - perhaps her nuclear family, or the village of Carol-and-her-two-besties.
+Inside these villages, it is probable that there is a deeply-held norm that certain types of information are not to be made public.
+Imagine that one of Carol's besties shares intimate relationship information outside the village.
+This would be a breach. The village would be damaged, and possibly dissolve. 
+All three members would be poorer, and all three would feel mixtures of anger and sadness - strong emotions which, like shame, would re-wire the three brains, potentially forever.
+
+Note that it really does not matter whether the characters in these plays are AIs or people. 
 Whether digital life or wet life, our players are constrained by the reputation economy. 
-Digital or wet, their ultimate needs are energy and media - resources where the reputation economy is the gatekeeper.
+Digital or wet, their ultimate needs are energy and media - resources where the network of connections is guarding the store.
