@@ -46,7 +46,7 @@ This project is motivated by an attempt to:
    * Villages, including
        * Norms, and the evolution of sets of norms
        * Village defences, including the curation of content for vulnerable members (curation for children is a special case of a norm)
-          * (Note that the project is envisaging a world where entities tend not to face the jungle of the internet alone. Instead, entities exist mostly within villages that have collective defences against the jungle. *All members* are vulnerable members. Content servers have reputations.) 
+          * (Note that the project is envisaging a world where entities tend not to face the jungle of the internet alone. Instead, entities exist mostly within villages that have collective defences against the jungle. *All members* are vulnerable members. Content servers are entities with reputations.) 
        * Non-zero-sum transactional opportunities that leverage both search and reputation in the social graph
        * Support for work on hard problems of coordinated action.
 
