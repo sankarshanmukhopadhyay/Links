@@ -101,7 +101,7 @@ Privacy is a norm.
 
 Imagine that one of Carol's besties shares intimate relationship information outside the village.
 This would be a breach. The village would be damaged, and possibly dissolve. 
-All three members would be poorer, and all three would feel mixtures of betrayal, anger, and sadness - strong emotions which, like shame, would re-wire the three brains, potentially forever.
+All three members would be poorer, and all three would feel mixtures of betrayal, anger, and sadness - strong emotions which, like shame, would re-wire the three brains, perhaps forever.
 
 Note that it really does not matter whether the characters in these plays are AIs or people. 
 Whether digital life or wet life, our players are constrained by the reputation economy. 
