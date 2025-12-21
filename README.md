@@ -109,13 +109,13 @@ Digital or wet, their ultimate needs are energy and media - resources where the 
 
 ### Symmetrical Authentication
 The web is a village. A key feature of the web is the hyperlink. 
-This was developed by Tim Berners-Lee as a handy way to jump from web page A to a web page B that had useful, related infirmation. 
-A few years later Larry Page and Sergey Brin realised that the hyperlink was also a reputational claim by page A about page B ... 
-also that now there were very many of such claims in the public domain. This allowed Page and Brin to calculate the prestige of page B within its village.
+This was developed by Tim Berners-Lee as a handy way to jump from Web Page A to related informstion in Web Page B.
+A few years later Larry Page and Sergey Brin realised that the hyperlink was also a reputation claim by page A about page B. 
+By this stage there were very many of such claims allowing Page and Brin to calculate the prestige of page B within its village.
 
 Imagine that web page B is Bob's bank. 
 When Bob uses a search engine to find his bank, the next step is an authentication ceremony that is asymmetrical. 
-The bank asks Bob to authenticate, but Bob does not ask the bank. 
+The bank asks Bob to authenticate, but Bob does not ask for the same the bank. 
 This is because Bob found the bank using search in the social graph of the bank's village. 
 
 This project envisages a symmetrical authentication ceremony where Bob find the real bank in its village *and then* the bank finds the real Bob in his village. 
