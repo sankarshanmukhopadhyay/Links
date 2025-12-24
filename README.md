@@ -7,7 +7,7 @@ www.village.link (This URL will become the front page. Currently it points strai
 ### Villages and Artificial Intelligence
 AIs are modelled on the brain. In a social species like our own, brains are organised into communities, into villages. 
 The village is the next-higher-up level of information processing after the brain. It is the natural repository of common sense, of culture.
-In a village, we have the sense of being part of something bigger.
+When we operate inside a village, we have a sense of being part of something bigger.
 
 AIs routinely make gaffes that would be a source of bemusement, shock, or ridicule in a village. 
 A village is a reputation economy where gaffes have consequences. 
@@ -17,7 +17,7 @@ Shame is a deep learning experience that re-wires the brain.
 
 Collectively, the village is policing a set of norms. 
 In this world, each individual must find a balance between compliance and ambition.
-Sometimes, individuals or coalitions of individuals push up against established culture and change it. Norms evolve. 
+Sometimes, ambitious individuals or coalitions of individuals push up against the established culture and change it. Norms evolve. 
 
 Human brains grow to maturity inside the reputation economy of a village. 
 As they do so, the brains develop constraints that guard against loss of prestige. 
@@ -36,15 +36,14 @@ But we are not proposing to work on such an AI as a first order of business.
 Instead we want to discover what is universal about human reputation systems and develop a common architecture to support those systems.
 
 ### Goals
-This project is motivated by an attempt to:
+The project is motivated by an attempt to:
 1. Harden communities against a future AI that is highly capable and potentially malign
 2. Address bottlenecks in AI development including alignment, context drift, and jagged intelligence
 1. Create a new/old toolkit for thinking about:
-   * Identity
-       * [Authentication](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Authentication,-Passwords,-and-2FA)
+   * Identity (and [authentication](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Authentication,-Passwords,-and-2FA))
    * Reputation
    * Social connections
-   * Connection weights
+   * [Connection weights](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities)
    * Villages, including
        * Norms, and the evolution of sets of norms
        * [Village defences](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Village-defences,-vulnerable-members), including the curation of content for vulnerable members. (Curation for children is an instance of a norm)
@@ -56,7 +55,7 @@ The project aims to build a type of decentralized agent that can:
 1. Store reputational information
 1. Make reputational claims about itself, (identity claims) and about others
 1. Assess the reputational claims of others by checking its own data store, and by querying the social graph
-1. Seek out, strengthen, weaken, or shut down connections based on reputation.
+1. Seek out, strengthen, weaken, or shut down [connections](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities) based on reputation.
 
 An entity, (for example an AI, a server, or a human person,) can manage zero, one, or any number of such reputational agents. 
 
@@ -100,7 +99,7 @@ She is most-likely also a member of some private villages - perhaps her nuclear 
 Inside these villages, it is probable that there is a deeply-held norm that certain types of information are not to be made public.
 Privacy is a norm.
 
-Imagine that one of Carol's besties shares intimate relationship information outside the village.
+Imagine that one of Carol's besties shares information about an intimate relationship outside the village of the three women.
 This would be a breach. The village would be damaged, and possibly dissolve. 
 All three members would be poorer, and all three would feel mixtures of betrayal, anger, and sadness - strong emotions which, like shame, would re-wire the three brains, perhaps forever.
 
@@ -112,6 +111,7 @@ Digital or wet, their ultimate needs are energy and media - resources where the 
 * [References](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/References)
 * [Wish list](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Wish-List)
 * [Authentication, passwords, and 2FA](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Authentication,-Passwords,-and-2FA)
+* [Connection weights](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities)
 * [Village defences](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Village-defences,-vulnerable-members)
 * [Earlier history of the project](https://inkytech.atlassian.net/wiki/spaces/IT/overview) - a link to a Confluence wiki.
 
