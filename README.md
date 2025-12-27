@@ -25,7 +25,7 @@ It is illustrative that teenagers can be acutely vulnerable to shame.
 They are learning the rules.
 
 The current generation of AIs do not yet guard their reputation in this way. 
-They don't develop the set of commonsense constraints, and often they seem stupid. 
+They don't develop the set of commonsense constraints, and often [they seem stupid](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence). 
 
 One of the premises of this project is that social constraints will soon form a part of the training framework for AI. 
 We believe the future will include a type of AI that knows its reputation is an asset, and that will have in its reward function a digital equivalent of shame. 
@@ -38,7 +38,7 @@ Instead we want to discover what is universal about human reputation systems and
 ### Goals
 The project is motivated by an attempt to:
 1. Harden communities against a future AI that is highly capable and potentially malign
-2. Address bottlenecks in AI development including alignment, context drift, and jagged intelligence
+2. Address bottlenecks in AI development including alignment, context drift, and [jagged intelligence](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence)
 1. Create a new/old toolkit for thinking about:
    * Identity (and [authentication](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Authentication,-Passwords,-and-2FA))
    * Reputation
@@ -119,6 +119,7 @@ Both genes and memes need media and energy - resources where the village is guar
 #### To the wiki ...
 * [Authentication, passwords, and 2FA](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Authentication,-Passwords,-and-2FA)
 * [Connection weights](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities)
+* [Jagged intelligence](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence)
 * [References](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/References)
 * [Search](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Search)
 * [Village defences](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Village-defences,-vulnerable-members)
