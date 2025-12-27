@@ -83,11 +83,12 @@ Next imagine that Bob has an existing, robust, connection to Alice, and he asks 
 
 Alice comes back: "Yeah, Carol's a babe. 
 She is <ins>this Carol</ins> in the village called **Wikipedia.Admins.en** and she is <ins>this Carol</ins> in the village called **GitHub.PythonProjects** and she is <ins>this Carol</ins>, the **YouTuber**."
-Bob's agent can query Alice's claims in the graph of Carol's connections ... or rather, amongst that part Carol's social graph that is also connected to Bob.
-In assessing Alice's claims about Carol, Bob's agent also has access to the not-insignificant reputational architecture of Wikipedia, GitHub, YouTube, and maybe more.
+Bob's agent can query Alice's claims in the graph of Carol's connections ... or rather, amongst that part of Carol's social graph that is either privately connected to Bob, or is in the public domain.
+The public information includes the not-insignificant reputational architecture of Wikipedia, GitHub, YouTube, and maybe more.
 
-At this point, Bob is somewhat intimidated by Carol, but he has an incentive to contact her because he can see that she will definitely have the answer to his current, thorny, problem X. 
-Also that if he can establish a connection with her it will bolster his own reputation.
+At this point, Bob is somewhat intimidated by Carol's high prestige, but he has an incentive to contact her because he can see that she will definitely have the answer to his current, thorny, problem X - that is why he accessed the search function through Alice. 
+Also that if he can establish a connection with Carol it will bolster his own reputation.
+
 Bob has risk around the possibility that Carol's agent will block his approach; and even worse, a risk that it will publish the fact that the approach was blocked. 
 These are the punishment strategies of the village. Bob needs to assess these risks in the light of his own prestige. 
 
@@ -100,13 +101,17 @@ She is most-likely also a member of some private villages - perhaps her nuclear 
 Inside these villages, it is probable that there is a deeply-held norm that certain types of information are not to be made public.
 Privacy is a norm.
 
-Imagine that one of Carol's besties shares information about an intimate relationship outside the village of the three women.
-This would be a breach. The village would be damaged, and possibly dissolve. 
+Imagine that Carol's shares information about her primary intimate relationship with her two friends.
+Next imagine that one of her friends shares this information outside the circle of three.
+This would be a breach. The village would be damaged, and possibly dissolve.
 All three members would be poorer, and all three would feel mixtures of betrayal, anger, and sadness - strong emotions which, like shame, would re-wire the three brains, perhaps forever.
 
-Note that it really does not matter whether the characters in these plays are AIs or people. 
-Whether digital life or wet life, our players are constrained by the reputation economy. 
-Digital or wet, their ultimate needs are energy and media - resources where the network of connections is guarding the store.
+Note that it really does not matter whether the characters in these plays are AIs or people.
+If they were AIs, they would be a new type of AI that does not lose context over time for certain types of learning.
+Also an AI that has a reputational asset, and feels risk.
+
+Whether digital life or organic life, our players are constrained by the reputation economy. 
+Digital or organic, their ultimate needs are energy and media - resources where the network of connections is guarding the store.
 
 ### Links
 * [References](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/References)
@@ -115,7 +120,7 @@ Digital or wet, their ultimate needs are energy and media - resources where the 
 * [Connection weights](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities)
 * [Village defences](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Village-defences,-vulnerable-members)
 * [Earlier history of the project](https://inkytech.atlassian.net/wiki/spaces/IT/overview) - a link to a Confluence wiki
-* The natural homes/ecosystems for the project are in:
+* The decentralized reputation explored in this project is adjacent to, but perhaps subtly different from decentralized trust, where there is a significant body of existing work:
   * [Decentralized Trust Working Group in Confluence](https://lf-toip.atlassian.net/wiki/spaces/HOME/pages/22985064/All+Members+Meeting+Page)
   * [The same group (roughly) in GitHub](https://github.com/trustoverip/dtgwg-cred-tf/tree/14-revised-vrc-spec---v02). 
   
