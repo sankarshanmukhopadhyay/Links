@@ -47,7 +47,7 @@ The project is motivated by an attempt to:
    * Villages, including
        * Norms, and the evolution of sets of norms
        * [Village defences](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Village-defences,-vulnerable-members), including the curation of content for vulnerable members. (Curation for children is an instance of a norm)
-       * Non-zero-sum transactional opportunities that leverage both search and reputation in the social graph
+       * Non-zero-sum transactional opportunities that leverage both [search](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Search) and reputation in the social graph
        * Support for work on hard problems of coordinated action.
 
 ### Architecture
@@ -64,7 +64,7 @@ In terms of the 'village' analogy for the project, the one-word description of t
 
 ### Bootstrap
 The project envisages sets of reputational strategies that can evolve to any level of sophistication. 
-Thankfully, we don't have to write those strategies - we just have to write the backbone.
+Thankfully, we don't have to write those strategies - we just have to write the foundation.
 
 However, to bootstrap the project, it seems sensible to build and release some agents to their rightful owners.
 These agents would be equipped with some strategies, however rudimentary.
@@ -86,7 +86,7 @@ She is <ins>this Carol</ins> in the village called **Wikipedia.Admins.en** and s
 Bob's agent can query Alice's claims in the graph of Carol's connections ... or rather, amongst that part of Carol's social graph that is either privately connected to Bob, or is in the public domain.
 The public information includes the not-insignificant reputational architecture of Wikipedia, GitHub, YouTube, and maybe more.
 
-At this point, Bob is somewhat intimidated by Carol's high prestige, but he has an incentive to contact her because he can see that she will definitely have the answer to his current, thorny, problem X - that is why he accessed the search function through Alice. 
+At this point, Bob is somewhat intimidated by Carol's high prestige, but he has an incentive to contact her because he can see that she will definitely have the answer to his current, thorny, problem X - that is why he accessed the [search function](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Search) through Alice. 
 Also that if he can establish a connection with Carol it will bolster his own reputation.
 
 Bob has risk around the possibility that Carol's agent will block his approach; and even worse, a risk that it will publish the fact that the approach was blocked. 
@@ -106,19 +106,24 @@ Next imagine that one of her friends shares this information outside the circle 
 This would be a breach. The village would be damaged, and possibly dissolve.
 All three members would be poorer, and all three would feel mixtures of betrayal, anger, and sadness - strong emotions which, like shame, would re-wire the three brains, perhaps forever.
 
+### Evolution
 Note that it really does not matter whether the characters in these plays are AIs or people.
-If they were AIs, they would be a new type of AI that does not lose context over time for certain types of learning.
-Also an AI that has a reputational asset, and feels risk.
+If they were AIs, they would be a new type of AI that develops long-term behavioural constraints and does not lose context for certain types of learning.
+Also a type of AI that knows it has a reputational asset, and feels risk.
 
-Whether digital life or organic life, our players are constrained by the reputation economy. 
-Digital or organic, their ultimate needs are energy and media - resources where the network of connections is guarding the store.
+We can expect AIs (and, of course, people) to evolve to a place where it appears they are goal-seeking for the survival of their memes (or genes).
+This is the ultimate reward function. 
+Both genes and memes need media and energy - resources where the village is guarding the store.
 
 ### Links
-* [References](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/References)
-* [Wish list](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Wish-List)
+#### To the wiki ...
 * [Authentication, passwords, and 2FA](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Authentication,-Passwords,-and-2FA)
 * [Connection weights](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities)
+* [References](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/References)
+* [Search](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Search)
 * [Village defences](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Village-defences,-vulnerable-members)
+* [Wish list](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Wish-List)
+#### To elsewhere ...
 * [Earlier history of the project](https://inkytech.atlassian.net/wiki/spaces/IT/overview) - a link to a Confluence wiki
 * The decentralized reputation explored in this project is adjacent to, but perhaps subtly different from decentralized trust, where there is a significant body of existing work:
   * [Decentralized Trust Working Group in Confluence](https://lf-toip.atlassian.net/wiki/spaces/HOME/pages/22985064/All+Members+Meeting+Page)
