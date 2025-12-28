@@ -116,7 +116,7 @@ This is the ultimate reward function.
 Both genes and memes need media and energy - resources where the village is guarding the store.
 
 ### Links
-#### To the wiki ...
+#### To the project wiki ...
 * [Authentication, passwords, and 2FA](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Authentication,-Passwords,-and-2FA)
 * [Connection weights](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities)
 * [Jagged intelligence](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence)
