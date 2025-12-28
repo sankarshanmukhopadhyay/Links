@@ -2,10 +2,10 @@
 
 Thank you for contributing.
 
-![github-banner](https://github.com/Inky-Tech-Pty-Ltd/Links/blob/main/Links%20GitHub%20Banner.jpg)
+![github-banner](https://github.com/Inky-Tech-Pty-Ltd/Links/blob/main/images/Links%20GitHub%20Banner.jpg)
 
-How to contribute:
-1. Fork (if using forks) or create a feature branch from `main`:
+### How to contribute:
+1. Fork or create a feature branch from `main`:
    - git checkout -b feature/my-change
 2. Create a virtual environment and install editable package:
    - python -m venv .venv
@@ -16,6 +16,6 @@ How to contribute:
 4. Commit and push, then open a Pull Request against `main`.
 5. Follow PR template checklist (tests, lint, description).
 
-Maintainability:
+### Maintainability:
 - Keep functions small and add tests.
 - Add type hints and docstrings where useful.
