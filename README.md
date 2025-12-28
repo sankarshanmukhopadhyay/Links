@@ -1,7 +1,7 @@
 # Links
 A project for building villages.
 
-![github-banner](https://github.com/Inky-Tech-Pty-Ltd/Links/blob/main/Links%20GitHub%20Banner.jpg)
+![github-banner](https://github.com/Inky-Tech-Pty-Ltd/Links/blob/main/images/Links%20GitHub%20Banner.jpg)
 www.village.link (This URL will become the front page. Currently it points straight back here.)
 
 ### Villages and Artificial Intelligence
