@@ -1,7 +1,12 @@
 import pywikibot
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 
-def get_active_admins():
+site = pywikibot.Site('en', 'wikipedia')
+
+user = pywikibot.User(site, ['Ahecht'])
+contributions = list(user.contributions(total=1))
+
+'''def get_active_admins():
     site = pywikibot.Site('en', 'wikipedia')
     
     active_admins = []
@@ -27,4 +32,4 @@ if __name__ == "__main__":
     admins = get_active_admins()
     print("Active Wikipedia Administrators:")
     for admin in sorted(admins):
-        print(admin)
+        print(admin)'''
