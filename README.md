@@ -52,14 +52,14 @@ The project is motivated by some big problems. How do we:
 ### Architecture
 The project aims to build a type of decentralized agent that can:
 1. Store reputational information
-2. Make reputational claims about itself, (identity claims) and about others
+2. Make reputational claims about itself, (identity claims,) and about others
 3. Assess the reputational claims of others by checking its own data store, and by querying the social graph
 4. Make decisions about what reputational claims are to be shared with whom
 5. Seek out, strengthen, weaken, or shut down [connections](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities) based on reputation.
 
-An entity, (for example an AI, a server, or a human person,) can manage zero, one, or any number of such reputational agents. 
-
 In terms of the 'village' analogy for the project, the one-word description of the architecture is *gossip*.
+
+The opportunity in the project comes from giving each entity, (human or otherwise,) efficient access to a reputational asset that is currently scattered across many domains, many channels, and many stores of information.
 
 ### Bootstrap
 The project envisages sets of reputational strategies that can evolve to any level of sophistication. 
@@ -100,10 +100,11 @@ She is most-likely also a member of some private villages - perhaps her nuclear 
 Inside these villages, it is probable that there is a deeply-held norm that certain types of information are not to be made public.
 Privacy is a norm.
 
-Imagine that Carol's shares information about her primary intimate relationship with her two friends.
+Imagine that Carol shares some private-life information, possibly salacious, with her two friends.
 Next imagine that one of her friends shares this information outside the circle of three.
 This would be a breach. The village would be damaged, and possibly dissolve.
-All three members would be poorer, and all three would feel mixtures of betrayal, anger, and sadness - strong emotions which, like shame, would re-wire the three brains, perhaps forever.
+All three members would be poorer, experiencing big negative hits in their reward functions.
+All three would feel mixtures of betrayal, anger, and sadness - strong emotions which, like shame, would re-wire the three brains, perhaps forever.
 
 ### Evolution
 Note that it really does not matter whether the characters in these plays are AIs or people.
