@@ -35,7 +35,7 @@ But we are not proposing to work on such an AI as a first order of business.
 Instead we want to discover what is universal about human reputation systems and develop a common architecture to support those systems.
 
 ### Goals
-The project is motivated by an attempt to:
+The project is motivated by some big problems. How do we:
 1. Harden communities against a future AI that is highly capable and potentially malign
 2. Address bottlenecks in AI development including alignment, context drift, and [jagged intelligence](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence)
 1. Create a new/old toolkit for thinking about:
@@ -47,7 +47,7 @@ The project is motivated by an attempt to:
        * Norms, and the evolution of sets of norms
        * [Village defences](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Village-defences,-vulnerable-members), including the curation of content for vulnerable members. (Curation for children is an instance of a norm)
        * Non-zero-sum transactional opportunities that leverage both [search](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Search) and reputation in the social graph
-       * Support for work on hard problems of coordinated action.
+       * Support for work on hard problems of coordinated action?
 
 ### Architecture
 The project aims to build a type of decentralized agent that can:
