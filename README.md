@@ -59,7 +59,8 @@ The project aims to build a type of decentralized agent that can:
 
 In terms of the 'village' analogy for the project, the one-word description of the architecture is *gossip*.
 
-The opportunity in the project comes from giving each entity, (human or otherwise,) efficient access to a reputational asset that is currently scattered across many domains, many channels, and many stores of information.
+The opportunity in the project comes from giving each entity, (human or otherwise,) efficient and networked access to a reputational asset that is currently scattered across many domains, many channels, and many stores of information.
+This is self-consciously similar to the process by which, in the early 1990s, the newly-developed web connected information sources that were previously scattered across the internet.
 
 ### Bootstrap
 The project envisages sets of reputational strategies that can evolve to any level of sophistication. 
@@ -129,6 +130,6 @@ Both genes and memes need media and energy - resources where the village is guar
 * [Earlier history of the project](https://inkytech.atlassian.net/wiki/spaces/IT/overview) - a link to a Confluence wiki
 * The decentralized reputation explored in this project is adjacent to, but perhaps subtly different from decentralized trust, where there is a significant body of existing work:
   * [Decentralized Trust Working Group in Confluence](https://lf-toip.atlassian.net/wiki/spaces/HOME/pages/22985064/All+Members+Meeting+Page)
+    * [A related repo in GitHub](https://github.com/trustoverip/dtgwg-cred-tf/tree/14-revised-vrc-spec---v02)
   * [AI & Human Trust Working Group](https://lf-toip.atlassian.net/wiki/spaces/HOME/pages/22982892/AI+Human+Trust+Working+Group)
-  * [A related repo in GitHub](https://github.com/trustoverip/dtgwg-cred-tf/tree/14-revised-vrc-spec---v02)
   * @Joe-Rasmussen has signed-up to attend weekly meeings of the *Decentralized Trust* and the *AI & Human Trust* working group weekly meetings. These are accessible from a calendar [here](https://zoom-lfx.platform.linuxfoundation.org/meetings/ToIP?view=month).
