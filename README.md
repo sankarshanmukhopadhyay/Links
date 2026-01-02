@@ -6,11 +6,11 @@ www.village.link (This URL will become the front page. Currently it points strai
 
 _**Links**_ is a project for building villages.
 
-The project aims to uncover a set of standard features, common to all human reputation systems. 
+The project aims to standardize over whatever features are common to all human reputation systems. 
 
-The project will offer users a decentralized agent that can create a concrete, useful, reputational asset out of the user's electronic history. The asset would be gleaned from multiple channels, multiple domains, multiple information sources. The generalized object that the agent can make, fashioned from these sources, is a 'reputation claim'. These claims will be designed in such a way as to invite verification in the social graph - similar to the way that a 'referees' section of a curriculum vitae invites verification.
+The project will offer users a decentralized agent that can create a concrete, useful, reputational asset out of the user's electronic history. The asset would be gleaned from multiple channels, multiple domains, multiple information sources. The key object that the agent can make, fashioned from these sources, is a 'reputation claim'. These claims will be designed in such a way as to invite verification in the social graph - similar to the way that a 'referees' section of a curriculum vitae invites verification.
 
-The reverse of this process would also be a task for the decentralized agent: The reverse is to take the reputational claims of others and seek to verify them against public or privately accessible social graphs.
+The reverse of this process would also be a task for the agent: The reverse is to verify the reputational claim of others.
 
 The aggregate of this activity is intended to build a networked reputation economy. The economy would exist within and between of layers of 'villages' at many scales.
 
