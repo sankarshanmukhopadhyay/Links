@@ -14,7 +14,7 @@ def get_active_admins():
             # Get the last contribution
             contributions = list(user.contributions(total=1))
             if contributions:
-                last_edit = contributions[0][1]  # contributions return (page, timestamp, comment, etc.)
+                last_edit = contributions[0][2]  # contributions return (page, timestamp, comment, etc.)
                 if last_edit > cutoff:
                     active_admins.append(user.username)
         except Exception as e:
