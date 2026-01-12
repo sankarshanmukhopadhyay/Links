@@ -32,8 +32,11 @@ The project will need additional rule-sets for bootstrapping, but these need to 
 #### Project Part 2
 
 The project is developed at a time of anxiety about the place of AIs in our community.
-Many of the current responses propose engineering solutions, or legislative solutions, or a combination of the two.
-This project proposes a social solution - that we deploy the ancient 'village level' thinking to work out which AIs should be invited into a community, and which should be shut out.  
+Many of the current responses propose engineering controls, or legislative controls, or a combination of the these.
+The anxiety is driven by a sense that it is hard to see how engineering or legislative controls could reduce the possibility space. 
+We belive it is safter to assume that AI development will explore the _whole_ possibility space.
+Evolutuion has always explored the whole possibiltiy space. Our cultural knowledge systems are designed to cope.
+This project proposes a social control - that we deploy the ancient 'village level' thinking so that differnt groups can work out which AIs should be invited into their communities, and which should not.  
 
 ### Villages and Artificial Intelligence
 AIs are modelled on the brain. In a social species like our own, brains are organised into communities, into villages. 
