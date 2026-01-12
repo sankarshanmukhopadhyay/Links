@@ -1,3 +1,8 @@
+# The goal here is a minimin viable reputation network
+# So far the script below grabs a list of active admins in the English Wikipedia
+# Next step is to gather the times they have @mentioned
+# another admin, and then build connection strengths off that data.
+
 import pywikibot
 from datetime import datetime, timedelta
 
