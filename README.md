@@ -48,7 +48,7 @@ Instead we want to discover what is universal about human reputation systems and
 The project is motivated by some big problems. How do we? ...
 1. Harden communities against a future AI that is highly capable and potentially malign
 2. Address bottlenecks in AI development including alignment, context drift, and [jagged intelligence](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence)
-3. Change the fundamentals of the way social media affects politics
+3. Change the fundamentals of the way social media affects our politics
 4. Create a new/old toolkit for thinking about:
    * Identity (and [authentication](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Authentication,-Passwords,-and-2FA))
    * Reputation
