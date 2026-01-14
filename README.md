@@ -35,9 +35,9 @@ The current generation of AIs do not yet guard their reputation in this way.
 They don't develop the set of commonsense constraints, and sometimes [they seem stupid](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence). 
 
 One of the premises of this project is that social constraints will soon form a part of the training framework for AI. 
-We believe the future will include a type of AI that knows its reputation is an asset, and that will have in its reward function a digital equivalent of shame. 
-We believe such an AI will have better access to the slippery notion of 'common sense'. 
-We think such an AI will seem less stupid, and is a better chance of aligning its behaviour with village norms.
+In that future, there will be a type of AI that knows its reputation is an asset, and that will have in its reward function a digital equivalent of shame. 
+It will have better access to the slippery notion of 'common sense,' and will seem less stupid.
+An AI that knows that its reputation is the price of entry will have a better chance of aligning its behaviour with village norms.
 
 But we are not proposing to work on such an AI as a first order of business. 
 Instead we want to discover what is universal about human reputation systems and develop a common architecture to support those systems.
@@ -45,9 +45,9 @@ Instead we want to discover what is universal about human reputation systems and
 ### Goals
 The project is motivated by some big problems. How do we? ...
 1. Harden communities against a future AI that is highly capable and potentially malign
-2. Address bottlenecks in AI development including alignment, context drift, and [jagged intelligence](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence)
-3. Change the fundamentals of the way social media affects our politics
-4. Create a new/old toolkit for thinking about:
+    * Address bottlenecks in AI development including alignment, context drift, and [jagged intelligence](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence)
+2. Change the fundamentals of the way social media affects our politics
+3. Create a new/old toolkit for thinking about:
    * Identity (and [authentication](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Authentication,-Passwords,-and-2FA))
    * Reputation
    * Social connections
