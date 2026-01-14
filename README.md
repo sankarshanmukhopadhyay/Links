@@ -32,7 +32,7 @@ As they do so, the brains develop constraints that guard against loss of prestig
 It is illustrative that teenagers can be acutely vulnerable to shame. 
 They are learning the rules.
 
-The current generation of AIs do not yet guard their reputation in this way. 
+The current generation of AIs do not yet learn the rules and guard their reputation in this way. 
 They don't develop the set of commonsense constraints, and sometimes [they seem stupid](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence). 
 
 One of the premises of this project is that social constraints will soon form a part of the training framework for AI. 
