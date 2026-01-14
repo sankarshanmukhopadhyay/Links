@@ -99,7 +99,7 @@ The public information includes the not-insignificant reputational architecture 
 
 At this point, Bob is somewhat intimidated by Carol's high prestige, but he has an incentive to contact her because he can see that she will definitely have the answer to his current, thorny, problem X. 
 In the language of the 'Goals' section above, this is an example of a non-zero-sum transactional opportunity.
-It's also the reason that Bob reached-out through the [social search function](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Search), where he discovered that his existing connection, Alice, was connected to his problem-solver, Carol. 
+It's also the reason that Bob reached-out through the [search function in the social graph](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Search) to find Carol. 
 
 Bob has risk around the possibility that Carol's agent will block his approach; and even worse, a risk that it will publish the fact that the approach was blocked. 
 These are the punishment strategies of the village. Bob needs to assess these risks in the light of his own prestige. 
@@ -129,12 +129,12 @@ This is the only reward function that matters in the medium term.
 Human people are also maximizing a reward function. 
 Over many generations, our genes have explored into the whole possibility space - testing some strategies that are cooperative, some that are more self-interested, and some that are plain nasty.
 
-The cooperative strategies cannot eliminate the nasty ones. Ecology has endless examples of this, and game theory has confirmed the effect with mathematics.
+The cooperative strategies cannot completely eliminate the nasty ones. Ecology has endless examples of this, and game theory has confirmed the effect with mathematics.
 It is not possible to eliminate the nasty strategies, but it is possible to hold them in equilibrium.
 
-It is naive, (and dangerous,) to hope that AIs will not explore the whole space of possibilities, including nasty strategies. 
+It is naive, (and dangerous,) to hope that AIs will not explore the whole space of possibilities, including the nasty strategies. 
 
-Cooperation in a vilage is the best technology so far for resisting the nastiness. 
+Cooperation in a village is the best technology so far for resisting the nastiness. 
 
 ---
 
