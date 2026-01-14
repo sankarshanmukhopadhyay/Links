@@ -55,7 +55,7 @@ The project is motivated by some big problems. How do we? ...
    * [Connection weights](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities)
    * Villages, including
        * Norms, and the evolution of sets of norms
-       * [Village defences](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Village-defences,-vulnerable-members). Village firewalls, and curation of content for vulnerable members, including children
+       * [Village defences](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Village-defences,-vulnerable-members). The village firewall, and curation of content for vulnerable members, including children
        * Non-zero-sum transactional opportunities that leverage both [search](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Search) and reputation in the social graph
        * Support for work on hard problems of coordinated action.
 
