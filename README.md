@@ -4,17 +4,37 @@ A project for building villages.
 ![github-banner](https://github.com/Inky-Tech-Pty-Ltd/Links/blob/main/images/Links%20GitHub%20Banner.jpg)
 www.village.link (This URL will become the front page. Currently it points straight back here.)
 
-### Reputation and Villages
+### Villages
 
-This project begins with reputation, communities, and governance. 
-In the project, communities are called 'villages'.
+This project begins with communities, reputation, and governance. 
+In the project, communities are called 'villages'. 
+Villages are self-governing and adaptive. They have evolved to control any type of envivonmental threat - internal or external.
+
+The paper below will argue that villages can be deployed to control the threat posed by a highly capable and misaligned AI.
+
+### Reputation
 
 Reputation is an asset - a ticket to participate in the village. 
 Reputation is built through positive interactions, and it suffers when village rules are broken - even if those rules are not written down.
 
 The project aims to build a 'reputation' architecture that can support any type of village at any scale.
+This paper argues that it will be difficult (not impossible) for a misaligned AI to develop a reputation that is acceptable to a village.
 
-### Artificial Intelligence and Reputation
+### Engineering Controls, Legislative Controls, Social Controls
+
+Engineering controls are the type that make it rare for dams (for example) to fail. The modes of fail are largely known, and engineers design accordingly.
+The system presupposes that the engineers are incentivised not to wash away the downstream towns. 
+But engineering controls liek this don't work if the engineers have different incentives. 
+When there are incentives to build destructive technlogies, we alwyas build those technologies.
+The precautionary approach is to assume that engineers will not refrain from building destructive AIs.
+
+Legislative controls are very visibly too slow; but they have a deeper weakness in this case:
+Laws work on the principle that a thing is legal unless there is a law against it. Legislation is default 'yes'.
+
+In contrast, villages are default 'no'. At the conservative end of the spectrum, they allow no new members, no new ideas, no wierd behaviour.
+And even if we come a few steps away from the most conservative, villages only allow new members, ideas, or behavoiours on the basis of the rules of the village. 
+
+### Artificial Intelligence
 
 AIs routinely make gaffes that would be a source of bemusement, shock, or ridicule in a village. 
 A village is a reputation economy where gaffes have consequences. 
