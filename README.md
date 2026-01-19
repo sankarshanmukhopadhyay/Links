@@ -165,6 +165,7 @@ Cooperation in a village is the best technology so far for resisting the nastine
 * [Bootstrap strategy](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Bootstrap)
 * [Connection weights](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities)
 * [Jagged intelligence](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Jagged-Intelligence)
+* [Person-to-Person Edges are Tricky](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Person%E2%80%90to%E2%80%90Person-Edges-are-Tricky)
 * [References, Research](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/References,-Research)
 * [Search](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Search)
 * [Village defences](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Village-defences,-vulnerable-members)
