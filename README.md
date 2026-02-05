@@ -6,35 +6,20 @@ www.village.link (This URL will become the front page. Currently it points strai
 
 ## Abstract
 
-#### Villages
+The central thesis of this project is that the village is a computational machine. 
+The village performs the fundamental requirement of a computer: That, instead of being a machine to perform one particular procedure, it is a machine to perform _any_ procedure.
+The programs that run on this machine are the things we call cultural knowledge. 
+These programs have allowed us to thrive in environments as diverse as the Australian desert and the Arctic tundra, and ultimately to dominate the planet.
 
-This project begins with communities, reputation, and governance. 
-In the project, communities are called 'villages'. 
-Villages are self-governing and adaptive. They have evolved to control any type of envivonmental threat - internal or external.
+A village is necessarily a collaborative affair. If the number of humans in a community falls below a threshold, knowledge is progressively lost, and technology runs backward.
+Collaboration implies governance.
 
-The paper below will argue that villages can be deployed to control the threat posed by a highly capable and misaligned AI.
+A village is a computational machine to:
+1. Liberate energy from any environment
+2. Distribute energy among the villagers
+3. Resist the threat of raiders, internal or external.
 
-#### Reputation
-
-Reputation is an asset - a ticket to participate in the village. 
-Reputation is built through positive interactions, and it suffers when village rules are broken - even if those rules are not written down.
-
-The project aims to build a 'reputation' architecture that can support any type of village at any scale.
-The paper argues that it will be difficult for a misaligned AI to develop a reputation that is acceptable to a village.
-
-#### Engineering Controls, Legislative Controls, Social Controls
-
-The precautionary approach is to assume that AI engineers will explore the whole possibility space - perhaps especially the exploitative possibilites. 
-They are already doing so.
-
-Legislative controls are very visibly too slow ... but they have a deeper weakness in this case:
-Laws work on the principle that a thing is legal unless there is a law against it. Legislation is default 'yes'.
-
-Villages work differently. By default they allow no new members, no new ideas, no wierd behaviour.
-Even when vilages they step away from this conservative default, each change is considered, vetted. Villages are default 'no'.
-
-This paper describes an approch to AI Alignment that does not require the development of new AI technology, and that does not require a political campaign. 
-Instead, it argues for some digital scaffolding that helps to support the existing defences of villages.
+This paper argues that the village structures that govern human communiites will also prove effective in the governance of Artificial Intelligence.
 
 ## Village Link
 
