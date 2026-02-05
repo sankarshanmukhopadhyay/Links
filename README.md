@@ -11,7 +11,7 @@ The village performs the fundamental requirement of a computer: That, instead of
 The programs that run on this machine are the things we call cultural knowledge. 
 Different versions of these programs have allowed us to thrive in environments as diverse as the Australian desert and the Arctic tundra, and ultimately to dominate the planet.
 
-A village is necessarily a collaborative affair. If the number of humans in a community falls below a threshold, knowledge is progressively lost, and technology runs backward.
+A village is necessarily a collaborative affair. If the number of humans in a community falls below a threshold, cultural knowledge is progressively lost, and technology runs backward.
 Collaboration implies governance.
 
 A village is a computational machine to:
