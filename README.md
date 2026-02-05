@@ -19,7 +19,7 @@ A village is a computational machine to:
 2. Distribute energy among the villagers
 3. Resist the threat of raiders, internal or external.
 
-This paper argues that the village structures that govern human communiites will also prove effective in the governance of Artificial Intelligence.
+This paper argues that the village structures that govern human communities will also prove effective in the governance of Artificial Intelligence.
 
 ## Village Link
 
