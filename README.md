@@ -53,7 +53,8 @@ They don't develop the set of commonsense constraints, and sometimes [they seem 
 One of the premises of this project is that social constraints will soon form a part of the training framework for AI. 
 In that future, there will be a type of AI that knows its reputation is an asset, and that will have in its reward function a digital equivalent of shame. 
 It will have better access to the slippery notion of 'common sense,' and will seem less stupid.
-An AI that knows that its reputation is the price of entry will have a better chance of aligning its behaviour with village norms.
+An AI that knows that its reputation is the price of entry will have a better chance of aligning its behaviour with village norms. If it does this effectively, it may win access to a slice of the village energy store.
+
 On their side, the villages need only do what they have always done: Exclude any party whose reputation does not fit the norms of the community.
 
 This project is not proposing to work on such an AI as a first order of business. 
