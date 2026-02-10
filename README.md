@@ -89,12 +89,15 @@ The disruptive opportunity in the project comes from giving each entity one or m
 The project envisages sets of reputational strategies that can evolve to any level of sophistication. 
 Thankfully, we don't have to write those strategies - we just have to write the foundation.
 
-However, to [bootstrap the project](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Bootstrap), it seems sensible to build and release some agents to their rightful owners.
+However, to bootstrap the project, it seems sensible to build and release some agents to their rightful owners.
 These agents would be equipped with some strategies, however rudimentary.
 To do this, the project will harvest examples from existing reputation systems. 
 Many types already exist, and some are in the public domain.
 In using this data, the project does not have to capture every nuance. 
 Instead, it just needs to capture a few key 'seed' features, and ensure that the system is evolvable.
+
+The harvesting of people's reputation data is not morally value-free. 
+The issue is explored a little more deeply on the page, [Outrageous Liberties](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Outrageous-Liberties).
 
 #### Reputation, rudimentary and not-so-rudimentary
 There are many places online where Bob can call attention to Alice using the _@Alice_ convention. 
