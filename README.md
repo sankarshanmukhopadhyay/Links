@@ -22,8 +22,10 @@ A village is a computational machine to:
 This paper argues that we can do better with emergent structures of self-governance. But also, that the structures we need for human self-governance will prove effective in the governance of AI.
 
 From a techinical perspective, the _Village Link_ project is an argument by analogy with Berners-Lee and the development of the web.
-Before the web, the internet was a bunch of islands of information - each very interesting in its own right, but ultimately much richer with a common backbone.
-Right now, reputational traces are a bunch of islands of social interaction. The project is to connect those islands with a common backbone.
+
+Before the web, the internet was a bunch of islands of information - each very interesting in its own right, but ultimately much richer once it had a connective tissue.
+
+Social interactions leave a trace of reputational information. Right now, that information is scattered across a bunch of islands, public and private. This project is designed to build the connective tissue between those islands.
 
 ## Village Link
 
