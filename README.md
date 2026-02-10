@@ -82,7 +82,7 @@ The project aims to build a type of decentralized agent that can:
 2. Make reputational claims about itself, (identity claims,) and about others
 3. Assess the reputational claims of others by checking its own data store, and by querying the social graph
 4. Make decisions about what reputational claims are to be shared with whom
-5. Seek out, strengthen, weaken, or shut down [connections](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities) based on reputation. (Connection weights are the synaptic tissue of the village.)
+5. Seek out, strengthen, weaken, or shut down [connections](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities) based on reputation. (Connection weights are the synaptic tissue of the village thinking machine.)
 
 The one-word description of the architecture is *gossip*. (NB there are a couple of competing drafts for the fundamental elements of the proposal, see [Axioms](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Axioms))
 
