@@ -19,7 +19,7 @@ A village is a computational machine to:
 2. Distribute energy among the villagers
 3. Resist the threat of raiders, internal or external.
 
-This paper argues that we can do better with emergent structures of self governance. But also that the structure we need for human self-governance will prove effective in the governance of AI.
+This paper argues that we can do better with emergent structures of self-governance. But also that the structure we need for human self-governance will prove effective in the governance of AI.
 
 From a techinical perspective, the _Village Link_ project is an argument by analogy with Berners-Lee and the development of the web.
 Before the web, the internet was a bunch of islands of information - each very interesting in its own right, but ultimately much richer with a common backbone.
