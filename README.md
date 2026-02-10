@@ -84,7 +84,9 @@ The project aims to build a type of decentralized agent that can:
 4. Make decisions about what reputational claims are to be shared with whom
 5. Seek out, strengthen, weaken, or shut down [connections](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Connection-weights.-Similarities-between-brains-and-communities) based on reputation. (Connection weights are the synaptic tissue of the village thinking machine.)
 
-The one-word description of the architecture is *gossip*. (NB there are a couple of competing drafts for the fundamental elements of the proposal, see [Axioms](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Axioms))
+The one-word description of the architecture is *gossip*. 
+
+(Note that there are currently two competing drafts for the fundamental elements of the project, see [Axioms](https://github.com/Inky-Tech-Pty-Ltd/Links/wiki/Axioms))
 
 The disruptive opportunity in the project comes from giving each entity one or more agents that can coordinate a reputational asset that is currently scattered across many domains, many channels, and many stores of information.
 
