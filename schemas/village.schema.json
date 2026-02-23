@@ -161,6 +161,11 @@
             "type": "string"
           },
           "description": "Allowed policy signer key hashes (sha256 of policy public key). Empty => allow any signer when require_policy_signature=false."
+        },
+        "policy_signature_threshold_m": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "M in M-of-N policy signer quorum (required when require_policy_signature=true)."
         }
       }
     }

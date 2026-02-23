@@ -88,3 +88,31 @@ links policy drift http://127.0.0.1:8080 ops
 ```
 
 Reconciliation rule: select the most recent update by `(created_at, policy_hash)`.
+
+
+### M-of-N signer quorum for policy updates
+
+Villages can require a signer quorum for policy updates:
+
+- `require_policy_signature: true`
+- `policy_signature_threshold_m: <M>`
+- `policy_signer_allowlist: [<key-hash-1>, <key-hash-2>, ...]`
+
+A policy update is accepted only if at least **M distinct allowlisted signers** have produced valid signatures over the update payload.
+
+#### Creating a multisig policy update artifact
+
+Generate an unsigned update, then have multiple operators append signatures:
+
+```bash
+# signer A
+links policy sign-add artifacts/policy_update.json keys/policy/alice.key artifacts/policy_update.s1.json
+
+# signer B (appends on top)
+links policy sign-add artifacts/policy_update.s1.json keys/policy/bob.key artifacts/policy_update.s2.json
+```
+
+Verify:
+```bash
+links policy verify artifacts/policy_update.s2.json
+```

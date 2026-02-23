@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
-from typing import Optional, Iterable, Tuple
+from typing import Optional, Iterable, Tuple, Set
+from datetime import timezone
 
-from .policy_updates import VillagePolicyUpdate, verify_update, key_hash_from_public_key_b64
+from .policy_updates import VillagePolicyUpdate, verify_update_any, verify_update_quorum
 
 
 def _updates_dir(villages_root: Path, village_id: str) -> Path:
@@ -15,8 +15,7 @@ def _updates_dir(villages_root: Path, village_id: str) -> Path:
 
 def store_policy_update(villages_root: Path, u: VillagePolicyUpdate) -> Path:
     d = _updates_dir(villages_root, u.village_id)
-    # Filename sortable by created_at
-    ts = u.created_at.astimezone(__import__("datetime").timezone.utc).isoformat().replace("+00:00","Z").replace(":","").replace("-","")
+    ts = u.created_at.astimezone(timezone.utc).isoformat().replace("+00:00","Z").replace(":","").replace("-","")
     p = d / f"{ts}.{u.policy_hash}.json"
     p.write_text(u.model_dump_json(indent=2), encoding="utf-8")
     return p
@@ -35,7 +34,6 @@ def latest_policy_update(villages_root: Path, village_id: str) -> Optional[Villa
     ups = list(iter_policy_updates(villages_root, village_id))
     if not ups:
         return None
-    # Reconcile rule: pick max by (created_at, policy_hash)
     ups.sort(key=lambda u: (u.created_at, u.policy_hash), reverse=True)
     return ups[0]
 
@@ -56,22 +54,31 @@ def filter_updates_since(villages_root: Path, village_id: str, since_hash: Optio
 
 
 def signer_allowed(policy: dict, u: VillagePolicyUpdate) -> Tuple[bool, str]:
+    """
+    Enforce policy signature rules with optional quorum:
+    - If require_policy_signature=true:
+        - enforce valid signatures
+        - enforce allowlist if provided
+        - enforce M-of-N threshold via policy_signature_threshold_m (default 1)
+    - If signatures are optional:
+        - if any signature material is present, it must verify (at least one valid)
+        - if allowlist is present, signatures must come from allowlisted keys
+    """
     require_sig = bool(policy.get("require_policy_signature", False))
-    allow = set(policy.get("policy_signer_allowlist", []) or [])
+    allowlist = list(policy.get("policy_signer_allowlist", []) or [])
+    threshold_m = int(policy.get("policy_signature_threshold_m", 1) or 1)
+
     if require_sig:
-        if not (u.public_key and u.signature):
-            return False, "signature required"
-        if not verify_update(u):
+        ok, msg = verify_update_quorum(u, required_m=threshold_m, signer_allowlist=allowlist if allowlist else None)
+        return ok, msg
+
+    # signatures optional: if any signature material exists, require at least one valid signature
+    has_any = bool(u.signatures) or bool(u.public_key) or bool(u.signature)
+    if has_any:
+        # if allowlist present, require at least one valid allowlisted signature
+        if allowlist:
+            ok, msg = verify_update_quorum(u, required_m=1, signer_allowlist=allowlist)
+            return ok, msg
+        if not verify_update_any(u):
             return False, "signature invalid"
-        signer_hash = key_hash_from_public_key_b64(u.public_key)
-        if allow and signer_hash not in allow:
-            return False, "signer not allowlisted"
-        return True, "ok"
-    # signatures optional: if provided, must verify
-    if u.public_key or u.signature:
-        if not verify_update(u):
-            return False, "signature invalid"
-        signer_hash = key_hash_from_public_key_b64(u.public_key) if u.public_key else None
-        if allow and signer_hash and signer_hash not in allow:
-            return False, "signer not allowlisted"
     return True, "ok"

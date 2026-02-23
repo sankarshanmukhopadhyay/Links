@@ -32,6 +32,24 @@
     },
     "signature": {
       "type": "string"
+    },
+    "signatures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "public_key",
+          "signature"
+        ],
+        "properties": {
+          "public_key": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }

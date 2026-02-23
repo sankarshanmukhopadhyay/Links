@@ -2,11 +2,14 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+import base64
 import typer
 import requests
 
+from nacl.signing import SigningKey
+
 from links.server import create_app
-from links.policy_updates import VillagePolicyUpdate, verify_update
+from links.policy_updates import VillagePolicyUpdate, verify_update_any, add_signature, sign_update_legacy
 from links.policy_feed import signer_allowed
 from links.validate import validate_village_id
 
@@ -27,10 +30,46 @@ def serve(host: str = "127.0.0.1", port: int = 8080):
     uvicorn.run(create_app(), host=host, port=port)
 
 
+@policy.command("sign-add")
+def policy_sign_add(inp: Path, key: Path, out: Path):
+    """
+    Append a signer signature to a policy update artifact (multisig quorum).
+    """
+    u = VillagePolicyUpdate.model_validate_json(inp.read_text(encoding="utf-8"))
+    seed = base64.b64decode(key.read_text(encoding="utf-8").strip())
+    sk = SigningKey(seed[:32])
+    s = add_signature(u, sk)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(s.model_dump_json(indent=2), encoding="utf-8")
+    typer.echo(f"Wrote {out}")
+
+
+@policy.command("sign-legacy")
+def policy_sign_legacy(inp: Path, key: Path, out: Path):
+    """
+    Produce a legacy single-signature policy update (public_key + signature).
+    """
+    u = VillagePolicyUpdate.model_validate_json(inp.read_text(encoding="utf-8"))
+    seed = base64.b64decode(key.read_text(encoding="utf-8").strip())
+    sk = SigningKey(seed[:32])
+    s = sign_update_legacy(u, sk)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(s.model_dump_json(indent=2), encoding="utf-8")
+    typer.echo(f"Wrote {out}")
+
+
+@policy.command("verify")
+def policy_verify(inp: Path):
+    u = VillagePolicyUpdate.model_validate_json(inp.read_text(encoding="utf-8"))
+    ok = verify_update_any(u)
+    typer.echo("OK" if ok else "FAIL")
+    raise typer.Exit(code=0 if ok else 1)
+
+
 @policy.command("pull")
 def policy_pull(url: str, village_id: str, apply: bool = True, since: str = None, token: str = None):
     """
-    Pull signed policy updates from a remote node, verify/reconcile, and optionally apply.
+    Pull policy updates from a remote node, verify, reconcile, and optionally apply.
     Reconcile rule: select latest update by (created_at, policy_hash).
     """
     validate_village_id(village_id)
@@ -52,22 +91,22 @@ def policy_pull(url: str, village_id: str, apply: bool = True, since: str = None
         typer.echo("No updates.")
         raise typer.Exit(code=0)
 
-    # verify signatures when present
+    # Verify at least one signature if any signature material is present in each update.
     for u in updates:
-        if u.public_key or u.signature:
-            if not verify_update(u):
-                typer.echo(f"Invalid signature for update policy_hash={u.policy_hash}")
-                raise typer.Exit(code=1)
+        has_any = bool(u.signatures) or bool(u.public_key) or bool(u.signature)
+        if has_any and not verify_update_any(u):
+            typer.echo(f"Invalid signature material for update policy_hash={u.policy_hash}")
+            raise typer.Exit(code=1)
 
     updates.sort(key=lambda u: (u.created_at, u.policy_hash), reverse=True)
     chosen = updates[0]
 
-    # drift detection
+    # Drift detection (best-effort)
     local_hash = None
     if load_village:
         try:
             v = load_village(Path("data"), village_id)
-            local_hash = getattr(v, "policy", None) and __import__("links.policy_updates", fromlist=["compute_policy_hash"]).compute_policy_hash(v.policy.model_dump())
+            local_hash = __import__("links.policy_updates", fromlist=["compute_policy_hash"]).compute_policy_hash(v.policy.model_dump())
         except Exception:
             local_hash = None
 
@@ -77,7 +116,6 @@ def policy_pull(url: str, village_id: str, apply: bool = True, since: str = None
         typer.echo(f"Remote latest policy_hash={chosen.policy_hash}")
 
     if apply and apply_policy_update:
-        # enforce local signer policy if possible
         current_policy = {}
         if load_village:
             try:
@@ -89,12 +127,12 @@ def policy_pull(url: str, village_id: str, apply: bool = True, since: str = None
         if not ok:
             typer.echo(f"Refusing to apply update: {msg}")
             raise typer.Exit(code=1)
+
         apply_policy_update(Path("data"), village_id, chosen.policy, actor=chosen.actor or "pull", update_meta={"policy_hash": chosen.policy_hash, "policy_update": "pull"})
         typer.echo("Applied.")
     else:
         typer.echo("Not applied (apply=false or local apply not available).")
 
-    # Write a local copy of chosen update
     out_dir = Path("artifacts/policy_feed") / village_id
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / f"latest.{chosen.policy_hash}.json"
