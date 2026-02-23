@@ -1,22 +1,21 @@
 from __future__ import annotations
 
 import json
-import time
 from pathlib import Path
-from fastapi import FastAPI, HTTPException, Header, Request
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException, Header, Query
 
-from .claims import ClaimBundle, verify_bundle
-from .store import ingest_bundle_file
+from .policy_updates import VillagePolicyUpdate, build_update
+from .policy_feed import store_policy_update, latest_policy_update, filter_updates_since, signer_allowed
 from .validate import validate_village_id
-from .villages import load_village, authorize, enforce_policy_on_bundle, issuer_key_hash_from_public_key_b64, issuer_allowed, role_can
-from .quarantine import quarantine_bundle
-from .audit import write_audit, AuditEvent, policy_hash
 
-
-def _latest_path(glob_it):
-    candidates = sorted(list(glob_it), key=lambda p: p.stat().st_mtime, reverse=True)
-    return candidates[0] if candidates else None
+# Optional: if a richer villages module exists, use it for auth + apply.
+try:
+    from .villages import authorize, role_can, load_village, apply_policy_update  # type: ignore
+except Exception:  # pragma: no cover
+    authorize = None
+    role_can = None
+    load_village = None
+    apply_policy_update = None
 
 
 def _bearer_token(authorization: str | None) -> str | None:
@@ -25,125 +24,59 @@ def _bearer_token(authorization: str | None) -> str | None:
     return None
 
 
-class RateLimiter:
-    """
-    Simple in-memory rate limiter (per-process).
-    Good enough for single-node deployments; for multi-node, put a reverse proxy or shared limiter in front.
-    """
-    def __init__(self):
-        self._hits = {}  # (key, window_start) -> count
+def create_app(store_root: Path = Path("data/store"), villages_root: Path = Path("data")) -> FastAPI:
+    app = FastAPI(title="Links Claim Exchange", version="0.8.0")
 
-    def allow(self, key: str, limit_per_min: int) -> bool:
-        now = int(time.time())
-        window = now - (now % 60)
-        k = (key, window)
-        self._hits[k] = self._hits.get(k, 0) + 1
-        return self._hits[k] <= max(1, int(limit_per_min))
-
-
-def create_app(store_root: Path = Path("data/store"), inbox_root: Path = Path("data/inbox"), villages_root: Path = Path("data")) -> FastAPI:
-    app = FastAPI(title="Links Claim Exchange", version="0.7.0")
-    inbox_root.mkdir(parents=True, exist_ok=True)
-    limiter = RateLimiter()
-
-    @app.middleware("http")
-    async def rate_limit_middleware(request: Request, call_next):
-        # Apply only to village inbox endpoints where abuse matters most
-        path = request.url.path or ""
-        if path.startswith("/villages/") and path.endswith("/inbox"):
-            parts = path.split("/")
-            if len(parts) >= 3:
-                village_id = parts[2]
-                try:
-                    validate_village_id(village_id)
-                except ValueError:
-                    return JSONResponse(status_code=400, content={"detail":"invalid village_id"})
-                v = load_village(villages_root, village_id)
-                token = _bearer_token(request.headers.get("authorization"))
-                key = f"{village_id}:{token or 'anon'}"
-                if not limiter.allow(key, v.policy.rate_limit_per_min):
-                    return JSONResponse(status_code=429, content={"detail":"rate limit exceeded"})
-        return await call_next(request)
-
-    @app.get("/.well-known/links/claims/latest")
-    def latest_bundle():
-        p = _latest_path((store_root / "bundles").rglob("*.json")) if (store_root / "bundles").exists() else None
-        if not p:
-            raise HTTPException(status_code=404, detail="no bundles available")
-        return json.loads(p.read_text(encoding="utf-8"))
-
-    @app.get("/villages/{village_id}/claims/latest")
-    def latest_village_bundle(village_id: str, authorization: str | None = Header(default=None)):
+    @app.get("/villages/{village_id}/policy/latest")
+    def policy_latest(village_id: str):
         validate_village_id(village_id)
-        token = _bearer_token(authorization)
-        member = authorize(villages_root, village_id, token) if token else None
-        if not member:
-            raise HTTPException(status_code=403, detail="forbidden")
+        u = latest_policy_update(villages_root, village_id)
+        if not u:
+            raise HTTPException(status_code=404, detail="no policy updates")
+        return json.loads(u.model_dump_json())
 
-        v = load_village(villages_root, village_id)
-        if not role_can(v.policy, member.get("role", "observer"), "pull"):
-            raise HTTPException(status_code=403, detail="forbidden")
-
-        bundles_dir = store_root / "bundles" / village_id
-        if not bundles_dir.exists():
-            raise HTTPException(status_code=404, detail="no bundles for village")
-        p = _latest_path(bundles_dir.glob("*.json"))
-        if not p:
-            raise HTTPException(status_code=404, detail="no bundles for village")
-        return json.loads(p.read_text(encoding="utf-8"))
-
-    @app.post("/inbox")
-    def post_inbox(bundle: dict):
-        cb = ClaimBundle.model_validate(bundle)
-        if not verify_bundle(cb):
-            raise HTTPException(status_code=400, detail="invalid bundle (signature/bundle_id)")
-        inbox_path = inbox_root / f"{cb.bundle_id}.json"
-        inbox_path.write_text(json.dumps(bundle, ensure_ascii=False, indent=2), encoding="utf-8")
-        ok, msg = ingest_bundle_file(inbox_path, store_root=store_root)
-        if not ok:
-            raise HTTPException(status_code=400, detail=msg)
-        return {"status": "ok", "message": msg, "bundle_id": cb.bundle_id}
-
-    @app.post("/villages/{village_id}/inbox")
-    def post_village_inbox(village_id: str, bundle: dict, authorization: str | None = Header(default=None)):
+    @app.get("/villages/{village_id}/policy/updates")
+    def policy_updates(village_id: str, since: str | None = Query(default=None)):
         validate_village_id(village_id)
-        token = _bearer_token(authorization)
-        member = authorize(villages_root, village_id, token) if token else None
-        if not member:
-            raise HTTPException(status_code=403, detail="forbidden")
+        ups = filter_updates_since(villages_root, village_id, since_hash=since)
+        return [json.loads(u.model_dump_json()) for u in ups]
 
-        v = load_village(villages_root, village_id)
-        if not role_can(v.policy, member.get("role", "observer"), "push"):
-            raise HTTPException(status_code=403, detail="forbidden")
+    @app.post("/villages/{village_id}/policy")
+    def policy_update(village_id: str, body: dict, authorization: str | None = Header(default=None)):
+        validate_village_id(village_id)
 
-        cb = ClaimBundle.model_validate(bundle)
-        if not verify_bundle(cb):
-            quarantine_bundle(store_root, bundle, cb.bundle_id, village_id, "invalid signature or bundle_id")
-            raise HTTPException(status_code=400, detail="invalid bundle (signature/bundle_id)")
+        # If auth system exists, require manage permission.
+        if authorize and role_can and load_village:
+            token = _bearer_token(authorization)
+            member = authorize(villages_root, village_id, token) if token else None
+            if not member:
+                raise HTTPException(status_code=403, detail="forbidden")
+            v = load_village(villages_root, village_id)
+            if not role_can(v.policy, member.get("role", "observer"), "manage"):
+                raise HTTPException(status_code=403, detail="forbidden")
+            current_policy = v.policy.model_dump()
+            actor = member.get("member_id")
+        else:
+            # local/dev mode
+            current_policy = {}
+            actor = "local"
 
-        issuer_hash = issuer_key_hash_from_public_key_b64(cb.public_key) if cb.public_key else None
-        if issuer_hash and not issuer_allowed(v.policy, issuer_hash):
-            quarantine_bundle(store_root, bundle, cb.bundle_id, village_id, "issuer not allowed", issuer_key_hash=issuer_hash)
-            write_audit(store_root, AuditEvent(action="ingest.reject", bundle_id=cb.bundle_id, village_id=village_id, issuer_key_hash=issuer_hash, actor=member.get("member_id"), reason="issuer not allowed", policy_hash=policy_hash(v.policy.model_dump())))
-            raise HTTPException(status_code=400, detail="policy violation: issuer not allowed")
+        # Accept either signed update artifact or raw policy dict
+        try:
+            u = VillagePolicyUpdate.model_validate(body)
+        except Exception:
+            policy_obj = body.get("policy") if isinstance(body, dict) and "policy" in body else body
+            u = build_update(village_id=village_id, policy=policy_obj, actor=actor)
 
-        okp, msgp = enforce_policy_on_bundle(v, bundle)
-        if not okp:
-            quarantine_bundle(store_root, bundle, cb.bundle_id, village_id, f"policy violation: {msgp}", issuer_key_hash=issuer_hash)
-            write_audit(store_root, AuditEvent(action="ingest.reject", bundle_id=cb.bundle_id, village_id=village_id, issuer_key_hash=issuer_hash, actor=member.get("member_id"), reason=msgp, policy_hash=policy_hash(v.policy.model_dump())))
-            raise HTTPException(status_code=400, detail=f"policy violation: {msgp}")
-
-        bundle["village_id"] = village_id
-        bundle["visibility"] = "village"
-
-        inbox_path = inbox_root / f"{village_id}.{cb.bundle_id}.json"
-        inbox_path.write_text(json.dumps(bundle, ensure_ascii=False, indent=2), encoding="utf-8")
-        ok, msg = ingest_bundle_file(inbox_path, store_root=store_root)
+        ok, msg = signer_allowed(current_policy, u)
         if not ok:
-            quarantine_bundle(store_root, bundle, cb.bundle_id, village_id, f"ingest failed: {msg}", issuer_key_hash=issuer_hash)
-            raise HTTPException(status_code=400, detail=msg)
+            raise HTTPException(status_code=400, detail=f"policy update rejected: {msg}")
 
-        write_audit(store_root, AuditEvent(action="ingest.accept", bundle_id=cb.bundle_id, village_id=village_id, issuer_key_hash=issuer_hash, actor=member.get("member_id"), reason="accepted", policy_hash=policy_hash(v.policy.model_dump())))
-        return {"status": "ok", "message": msg, "bundle_id": cb.bundle_id, "village_id": village_id}
+        store_policy_update(villages_root, u)
+
+        # Apply locally if the implementation supports it
+        if apply_policy_update:
+            apply_policy_update(villages_root, village_id, u.policy, actor=actor, update_meta={"policy_hash": u.policy_hash, "policy_update": "stored"})
+        return {"status": "ok", "village_id": village_id, "policy_hash": u.policy_hash}
 
     return app

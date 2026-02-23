@@ -2,234 +2,23 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
-import base64
-import secrets
 import typer
-from links.validate import validate_village_id
-
 import requests
 
-from nacl.signing import SigningKey
-
 from links.server import create_app
-from links.store import ingest_bundle_file, query_claims
-from links.villages import (
-    Village, VillageGovernance, VillagePolicy, save_village, load_village,
-    add_member, revoke_member, rotate_member_token,
-    issuer_key_hash_from_public_key_b64, add_issuer_allow, add_issuer_block,
-    apply_policy_update,
-)
-from links.policy_updates import build_update, sign_update, verify_update, VillagePolicyUpdate
-from links.keys import generate_ed25519_keypair
-from links.quarantine import list_quarantine, approve_quarantine, reject_quarantine
+from links.policy_updates import VillagePolicyUpdate, verify_update
+from links.policy_feed import signer_allowed
+from links.validate import validate_village_id
+
+try:
+    from links.villages import apply_policy_update, load_village  # type: ignore
+except Exception:  # pragma: no cover
+    apply_policy_update = None
+    load_village = None
 
 app = typer.Typer(help="Links: verifiable claim exchange with group policy controls.")
-villages_app = typer.Typer(help="Group governance and policy controls")
-claims_app = typer.Typer(help="Store operations for bundles")
-sync_app = typer.Typer(help="HTTP sync helpers")
-quarantine_app = typer.Typer(help="Review workflow for quarantined bundles")
-policy_app = typer.Typer(help="Policy update artifacts and application")
-
-app.add_typer(villages_app, name="villages")
-app.add_typer(claims_app, name="claims")
-app.add_typer(sync_app, name="sync")
-app.add_typer(quarantine_app, name="quarantine")
-app.add_typer(policy_app, name="policy")
-
-
-@villages_app.command("create")
-def villages_create(
-    village_id: str,
-    name: str,
-    admin: str,
-    description: str = "",
-    visibility: str = "village",
-    allowed_predicate: str = "links.weighted_to",
-    max_window_days: int = 30,
-    require_issuer_allowlist: bool = False,
-):
-    v = Village(
-        village_id=village_id,
-        name=name,
-        description=description,
-        created_at=__import__("datetime").datetime.now(__import__("datetime").timezone.utc),
-        governance=VillageGovernance(admins=[admin]),
-        policy=VillagePolicy(
-            visibility=visibility,
-            allowed_predicates=[allowed_predicate],
-            max_window_days=max_window_days,
-            require_issuer_allowlist=require_issuer_allowlist,
-        ),
-    )
-    p = save_village(Path("data"), v)
-    token = secrets.token_urlsafe(32)
-    add_member(Path("data"), village_id, member_id=admin, role="admin", token_plain=token, actor=admin)
-    typer.echo(f"Created village at {p}")
-    typer.echo("Admin bearer token (store securely, shown once):")
-    typer.echo(token)
-
-
-@villages_app.command("add-member")
-def villages_add_member(village_id: str, member_id: str, role: str = "member", actor: str = "admin"):
-    token = secrets.token_urlsafe(32)
-    add_member(Path("data"), village_id, member_id=member_id, role=role, token_plain=token, actor=actor)
-    typer.echo("Member bearer token (store securely, shown once):")
-    typer.echo(token)
-
-
-@villages_app.command("revoke-member")
-def villages_revoke_member(village_id: str, member_id: str, actor: str = "admin", reason: str = "revoked"):
-    n = revoke_member(Path("data"), village_id, member_id=member_id, actor=actor, reason=reason)
-    typer.echo(f"Revoked {n} token(s) for member_id={member_id}")
-
-
-@villages_app.command("rotate-token")
-def villages_rotate_token(village_id: str, member_id: str, actor: str = "admin"):
-    token = secrets.token_urlsafe(32)
-    rotate_member_token(Path("data"), village_id, member_id=member_id, new_token_plain=token, actor=actor)
-    typer.echo("New bearer token (store securely, shown once):")
-    typer.echo(token)
-
-
-@villages_app.command("allow-issuer-key")
-def villages_allow_issuer_key(village_id: str, public_key_b64: str, actor: str = "admin"):
-    kh = issuer_key_hash_from_public_key_b64(public_key_b64)
-    add_issuer_allow(Path("data"), village_id, issuer_key_hash=kh, actor=actor)
-    typer.echo(f"Allowed issuer key hash: {kh}")
-
-
-@villages_app.command("block-issuer-key")
-def villages_block_issuer_key(village_id: str, public_key_b64: str, actor: str = "admin"):
-    kh = issuer_key_hash_from_public_key_b64(public_key_b64)
-    add_issuer_block(Path("data"), village_id, issuer_key_hash=kh, actor=actor)
-    typer.echo(f"Blocked issuer key hash: {kh}")
-
-
-@villages_app.command("show")
-def villages_show(village_id: str):
-    v = load_village(Path("data"), village_id)
-    typer.echo(v.model_dump_json(indent=2))
-
-
-@policy_app.command("gen-key")
-def policy_gen_key(out_dir: Path = Path("keys/policy")):
-    priv, pub = generate_ed25519_keypair(out_dir)
-    typer.echo(f"Wrote policy signing key seed to {priv}")
-    typer.echo(f"Wrote policy public key to {pub}")
-
-
-@policy_app.command("export")
-def policy_export(village_id: str, out: Path = Path("artifacts/policy_update.json"), actor: str = "admin"):
-    v = load_village(Path("data"), village_id)
-    u = build_update(village_id=village_id, policy=v.policy.model_dump(), actor=actor)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(u.model_dump_json(indent=2), encoding="utf-8")
-    typer.echo(f"Wrote policy update artifact to {out}")
-
-
-@policy_app.command("sign")
-def policy_sign(inp: Path = Path("artifacts/policy_update.json"), key: Path = Path("keys/policy/ed25519.key"), out: Path = Path("artifacts/policy_update.signed.json")):
-    u = VillagePolicyUpdate.model_validate_json(inp.read_text(encoding="utf-8"))
-    seed = base64.b64decode(key.read_text(encoding="utf-8").strip())
-    sk = SigningKey(seed[:32])
-    s = sign_update(u, sk)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(s.model_dump_json(indent=2), encoding="utf-8")
-    typer.echo(f"Signed policy update -> {out}")
-
-
-@policy_app.command("verify")
-def policy_verify(inp: Path = Path("artifacts/policy_update.signed.json")):
-    u = VillagePolicyUpdate.model_validate_json(inp.read_text(encoding="utf-8"))
-    ok = verify_update(u)
-    typer.echo("OK" if ok else "FAIL")
-    raise typer.Exit(code=0 if ok else 1)
-
-
-@policy_app.command("apply-local")
-def policy_apply_local(village_id: str, inp: Path, actor: str = "admin"):
-    body = json.loads(inp.read_text(encoding="utf-8"))
-    if "policy" in body and "policy_hash" in body:
-        u = VillagePolicyUpdate.model_validate(body)
-        if u.public_key or u.signature:
-            if not verify_update(u):
-                raise typer.Exit(code=1)
-        apply_policy_update(Path("data"), village_id, u.policy, actor=actor, update_meta={"policy_update": "local", "policy_hash": u.policy_hash})
-    else:
-        apply_policy_update(Path("data"), village_id, body, actor=actor, update_meta={"policy_update": "local-plain"})
-    typer.echo("Applied policy locally.")
-
-
-@policy_app.command("apply-remote")
-def policy_apply_remote(url: str, village_id: str, token: str, inp: Path):
-    endpoint = url.rstrip("/") + f"/villages/{village_id}/policy"
-    payload = json.loads(inp.read_text(encoding="utf-8"))
-    r = requests.post(endpoint, headers={"Authorization": f"Bearer {token}"}, json=payload, timeout=30)
-    if r.status_code >= 400:
-        typer.echo(r.text)
-        raise typer.Exit(code=1)
-    typer.echo(r.text)
-
-
-@claims_app.command("ingest")
-def claims_ingest(inp: Path, store_root: Path = Path("data/store")):
-    ok, msg = ingest_bundle_file(inp, store_root=store_root)
-    typer.echo(msg)
-    raise typer.Exit(code=0 if ok else 1)
-
-
-@claims_app.command("query")
-def claims_query(subject: str = None, issuer: str = None, predicate: str = None, village_id: str = None):
-    rows = query_claims(subject=subject, issuer=issuer, predicate=predicate, village_id=village_id)
-    typer.echo(json.dumps(rows, ensure_ascii=False, indent=2))
-
-
-@sync_app.command("pull-village")
-def pull_village(url: str, village_id: str, token: str, ingest: bool = True, inbox_dir: Path = Path("data/inbox")):
-    endpoint = url.rstrip("/") + f"/villages/{village_id}/claims/latest"
-    r = requests.get(endpoint, headers={"Authorization": f"Bearer {token}"}, timeout=30)
-    r.raise_for_status()
-    bundle = r.json()
-    bundle_id = bundle.get("bundle_id", "unknown")
-    inbox_dir.mkdir(parents=True, exist_ok=True)
-    out = inbox_dir / f"{village_id}.{bundle_id}.json"
-    out.write_text(json.dumps(bundle, ensure_ascii=False, indent=2), encoding="utf-8")
-    typer.echo(f"Pulled village bundle {bundle_id} -> {out}")
-    if ingest:
-        ok, msg = ingest_bundle_file(out, store_root=Path("data/store"))
-        typer.echo(msg)
-        raise typer.Exit(code=0 if ok else 1)
-
-
-@sync_app.command("push-village")
-def push_village(url: str, village_id: str, token: str, bundle: Path):
-    payload = json.loads(bundle.read_text(encoding="utf-8"))
-    endpoint = url.rstrip("/") + f"/villages/{village_id}/inbox"
-    r = requests.post(endpoint, headers={"Authorization": f"Bearer {token}"}, json=payload, timeout=30)
-    if r.status_code >= 400:
-        typer.echo(r.text)
-        raise typer.Exit(code=1)
-    typer.echo(r.text)
-
-
-@quarantine_app.command("list")
-def quarantine_list(village_id: str = None, store_root: Path = Path("data/store")):
-    paths = list_quarantine(store_root, village_id=village_id)
-    typer.echo("\n".join([str(p) for p in paths]) if paths else "(empty)")
-
-
-@quarantine_app.command("approve")
-def quarantine_approve(bundle_path: Path, store_root: Path = Path("data/store")):
-    ok, msg = approve_quarantine(store_root, bundle_path)
-    typer.echo(msg)
-    raise typer.Exit(code=0 if ok else 1)
-
-
-@quarantine_app.command("reject")
-def quarantine_reject(bundle_path: Path, village_id: str = None, reason: str = "rejected", store_root: Path = Path("data/store")):
-    ok, msg = reject_quarantine(store_root, bundle_path, village_id=village_id, reason=reason)
-    typer.echo(msg)
-    raise typer.Exit(code=0 if ok else 1)
+policy = typer.Typer(help="Policy feed operations")
+app.add_typer(policy, name="policy")
 
 
 @app.command("serve")
@@ -238,5 +27,103 @@ def serve(host: str = "127.0.0.1", port: int = 8080):
     uvicorn.run(create_app(), host=host, port=port)
 
 
-if __name__ == "__main__":
-    app()
+@policy.command("pull")
+def policy_pull(url: str, village_id: str, apply: bool = True, since: str = None, token: str = None):
+    """
+    Pull signed policy updates from a remote node, verify/reconcile, and optionally apply.
+    Reconcile rule: select latest update by (created_at, policy_hash).
+    """
+    validate_village_id(village_id)
+    base = url.rstrip("/")
+    endpoint = f"{base}/villages/{village_id}/policy/updates"
+    params = {}
+    if since:
+        params["since"] = since
+
+    headers = {}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
+    r = requests.get(endpoint, params=params, headers=headers, timeout=30)
+    r.raise_for_status()
+    updates = [VillagePolicyUpdate.model_validate(u) for u in r.json()]
+
+    if not updates:
+        typer.echo("No updates.")
+        raise typer.Exit(code=0)
+
+    # verify signatures when present
+    for u in updates:
+        if u.public_key or u.signature:
+            if not verify_update(u):
+                typer.echo(f"Invalid signature for update policy_hash={u.policy_hash}")
+                raise typer.Exit(code=1)
+
+    updates.sort(key=lambda u: (u.created_at, u.policy_hash), reverse=True)
+    chosen = updates[0]
+
+    # drift detection
+    local_hash = None
+    if load_village:
+        try:
+            v = load_village(Path("data"), village_id)
+            local_hash = getattr(v, "policy", None) and __import__("links.policy_updates", fromlist=["compute_policy_hash"]).compute_policy_hash(v.policy.model_dump())
+        except Exception:
+            local_hash = None
+
+    if local_hash and local_hash != chosen.policy_hash:
+        typer.echo(f"Drift detected: local={local_hash} remote_latest={chosen.policy_hash}")
+    else:
+        typer.echo(f"Remote latest policy_hash={chosen.policy_hash}")
+
+    if apply and apply_policy_update:
+        # enforce local signer policy if possible
+        current_policy = {}
+        if load_village:
+            try:
+                v = load_village(Path('data'), village_id)
+                current_policy = v.policy.model_dump()
+            except Exception:
+                current_policy = {}
+        ok, msg = signer_allowed(current_policy, chosen)
+        if not ok:
+            typer.echo(f"Refusing to apply update: {msg}")
+            raise typer.Exit(code=1)
+        apply_policy_update(Path("data"), village_id, chosen.policy, actor=chosen.actor or "pull", update_meta={"policy_hash": chosen.policy_hash, "policy_update": "pull"})
+        typer.echo("Applied.")
+    else:
+        typer.echo("Not applied (apply=false or local apply not available).")
+
+    # Write a local copy of chosen update
+    out_dir = Path("artifacts/policy_feed") / village_id
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / f"latest.{chosen.policy_hash}.json"
+    out.write_text(chosen.model_dump_json(indent=2), encoding="utf-8")
+    typer.echo(f"Wrote {out}")
+
+
+@policy.command("drift")
+def policy_drift(url: str, village_id: str, token: str = None):
+    """
+    Compare local policy hash to remote latest policy hash.
+    """
+    validate_village_id(village_id)
+    base = url.rstrip("/")
+    endpoint = f"{base}/villages/{village_id}/policy/latest"
+    headers = {}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    r = requests.get(endpoint, headers=headers, timeout=30)
+    r.raise_for_status()
+    remote = VillagePolicyUpdate.model_validate(r.json())
+    remote_hash = remote.policy_hash
+
+    local_hash = None
+    if load_village:
+        try:
+            v = load_village(Path("data"), village_id)
+            local_hash = __import__("links.policy_updates", fromlist=["compute_policy_hash"]).compute_policy_hash(v.policy.model_dump())
+        except Exception:
+            local_hash = None
+
+    typer.echo(json.dumps({"village_id": village_id, "local_policy_hash": local_hash, "remote_policy_hash": remote_hash, "drift": (local_hash != remote_hash)}, indent=2))

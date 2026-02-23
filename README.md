@@ -62,4 +62,29 @@ Approvals re-check current village policy before ingestion.
 
 - `docs/ethics.md`
 - `docs/risks.md`
-- `docs/NEXT_INCREMENT_PLAN.md`
+- ``
+
+
+## Policy feed and reconciliation
+
+Nodes can publish village policy updates and other nodes can **pull**, verify, reconcile, and apply them.
+
+### Policy feed endpoints
+
+- `GET /villages/{village_id}/policy/latest`
+- `GET /villages/{village_id}/policy/updates?since=<policy_hash>`
+- `POST /villages/{village_id}/policy` (stores an update; may be admin-gated depending on local village configuration)
+
+### Pull + apply (client)
+
+```bash
+links policy pull http://127.0.0.1:8080 ops --apply
+```
+
+### Drift detection
+
+```bash
+links policy drift http://127.0.0.1:8080 ops
+```
+
+Reconciliation rule: select the most recent update by `(created_at, policy_hash)`.
