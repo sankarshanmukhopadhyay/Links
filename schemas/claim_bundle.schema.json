@@ -1,0 +1,41 @@
+{
+  "$id": "https://links.local/schema/claim_bundle.json",
+  "type": "object",
+  "required": [
+    "bundle_id",
+    "issuer",
+    "created_at",
+    "window_days",
+    "claims"
+  ],
+  "properties": {
+    "bundle_id": {
+      "type": "string"
+    },
+    "issuer": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "window_days": {
+      "type": "integer"
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "$ref": "https://links.local/schema/claim.json"
+      }
+    },
+    "public_key": {
+      "type": "string"
+    },
+    "signature": {
+      "type": "string"
+    },
+    "signature_alg": {
+      "type": "string"
+    }
+  }
+}

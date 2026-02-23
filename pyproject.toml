@@ -1,13 +1,17 @@
 [build-system  "typer>=0.9",
   "pydantic>=2.0",
   "networkx>=3.0",
+  "pynacl>=1.5",
+  "fastapi>=0.110",
+  "uvicorn>=0.23",
+  "requests>=2.31",
 ]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "links"
-version = "0.0.1"
+version = "0.3.0"
 description = "Python scripts for Links repo"
 readme = "README.md"
 requires-python = ">=3.8"

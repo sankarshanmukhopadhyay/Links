@@ -296,3 +296,30 @@ Outputs:
 - No hidden inference beyond the defined interaction rule
 - Sliding window derivation (default 30 days)
 - Artifacts are explainable and inspectable (observations → links)
+## Phase 3: Signed claim bundles + exchange (3a/3b/3c)
+
+Phase 2 produces edges. Phase 3 packages those edges into **portable, verifiable claim bundles** and supports simple HTTP exchange.
+
+### 3a — Build + sign + verify
+
+```bash
+pip install -e .
+links keys gen --out-dir keys
+links claims build --edges artifacts/graphs/wikipedia_admins_edges_30d.json --issuer links-node:local
+links claims sign --in artifacts/claims/claim_bundle.json --key keys/ed25519.key
+links claims verify --in artifacts/claims/claim_bundle.signed.json
+```
+
+### 3b — Ingest + query
+
+```bash
+links claims ingest artifacts/claims/claim_bundle.signed.json
+links claims query --subject wikipedia:en:Alice
+```
+
+### 3c — Serve + sync
+
+```bash
+links serve --host 127.0.0.1 --port 8080
+links sync pull http://127.0.0.1:8080
+```

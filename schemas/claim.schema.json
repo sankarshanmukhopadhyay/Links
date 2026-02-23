@@ -1,0 +1,49 @@
+{
+  "$id": "https://links.local/schema/claim.json",
+  "type": "object",
+  "required": [
+    "issuer",
+    "subject",
+    "predicate",
+    "window_days",
+    "computed_at"
+  ],
+  "properties": {
+    "issuer": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "predicate": {
+      "type": "string"
+    },
+    "object": {
+      "type": "string"
+    },
+    "value": {
+      "type": [
+        "number",
+        "string",
+        "boolean",
+        "null"
+      ]
+    },
+    "window_days": {
+      "type": "integer"
+    },
+    "computed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "derivation": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
