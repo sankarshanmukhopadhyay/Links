@@ -1,19 +1,6 @@
 # Village Link
 A project for building villages.
 
-> **Fork focus:** operational pipelines + schemas + a CLI for reproducible, explainable link-derivation from public data sources (starting with Wikipedia).
->
-> Upstream baseline is vendored under `upstream/` for easy auditing and diffing; fork work lives in the repo root.
-
-## What’s different in this fork
-
-- **`pipelines/`**: end-to-end data ingestion + normalization flows (currently Wikipedia-focused).
-- **`schemas/`**: JSON Schemas for entities, links, and observations (for validation and portability).
-- **`links/`**: a small, ergonomic Python package/CLI that turns observations into link graphs.
-
-Upstream code is preserved under `upstream/` so reviewers can quickly see what’s inherited vs. what’s added.
-
-
 ![github-banner](https://github.com/Inky-Tech-Pty-Ltd/Links/blob/main/images/Links%20GitHub%20Banner.jpg)
 www.village.link (This URL will become the front page. Currently it points straight back here.)
 
@@ -226,73 +213,3 @@ Cooperation in a village is the best technology so far for resisting the nastine
 <p align="center">
 <img width="134" height="82" alt="Logo flipped, transparent" src="https://github.com/user-attachments/assets/769474f3-3090-4a6a-abf7-075edccc5b2b" />
 </p>
-
-
-## Operationalization (v0.1.0)
-
-This release introduces:
-
-- Formal JSON schemas for Entity, Observation, and Link
-- CLI interface (`links`) for deterministic pipeline execution
-- Structured raw → normalized → derived data layout
-- Graph export capability (JSON/GraphML planned)
-
-### Definition of Done
-
-```bash
-pip install -e .
-links wikipedia-admins --limit 200 --active-days 30
-links build-links --window 30
-links export-graph --format json
-```
-
-Artifacts are written to:
-
-```
-artifacts/graphs/
-```
-
-### Ethical Guardrails
-
-- Public data only
-- No hidden inference
-- Sliding window derivation
-- Experimental research purpose
-
-## Wikipedia admin interaction graph
-
-This repo can derive an explainable directed interaction graph from *public* Wikipedia activity.
-
-**MVP interaction definition:** if admin A edits the *User talk* page of admin B within the window, we emit an observation and derive an edge A → B.
-
-### Quickstart
-
-```bash
-pip install -e .
-
-# 1) Sample admins and mark active (last edit within N days)
-links wikipedia admins --limit 200 --active-days 30
-
-# 2) Ingest interactions (User talk edits among active admins) within window
-links wikipedia mentions --window-days 30 --per-user-limit 200
-
-# 3) Validate + normalize observations
-links wikipedia normalize
-
-# 4) Derive links and export graph artifacts (JSON edges + GraphML for Gephi)
-links wikipedia build-links --window-days 30
-```
-
-Outputs:
-- `data/raw/wikipedia_admins.jsonl`
-- `data/raw/wikipedia_observations.jsonl`
-- `data/normalized/observations.jsonl`
-- `artifacts/graphs/wikipedia_admins_edges_30d.json`
-- `artifacts/graphs/wikipedia_admins_30d.graphml`
-
-### Ethical guardrails
-
-- Public data only
-- No hidden inference beyond the defined interaction rule
-- Sliding window derivation (default 30 days)
-- Artifacts are explainable and inspectable (observations → links)
