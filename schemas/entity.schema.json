@@ -1,0 +1,29 @@
+{
+  "$id": "https://links.local/schema/entity.json",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "type",
+    "source",
+    "source_identifier"
+  ],
+  "properties": {
+    "entity_id": {
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "person",
+        "org",
+        "bot",
+        "page"
+      ]
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_identifier": {
+      "type": "string"
+    }
+  }
+}

@@ -213,3 +213,35 @@ Cooperation in a village is the best technology so far for resisting the nastine
 <p align="center">
 <img width="134" height="82" alt="Logo flipped, transparent" src="https://github.com/user-attachments/assets/769474f3-3090-4a6a-abf7-075edccc5b2b" />
 </p>
+
+
+## Operationalization (v0.1.0)
+
+This release introduces:
+
+- Formal JSON schemas for Entity, Observation, and Link
+- CLI interface (`links`) for deterministic pipeline execution
+- Structured raw → normalized → derived data layout
+- Graph export capability (JSON/GraphML planned)
+
+### Definition of Done
+
+```bash
+pip install -e .
+links wikipedia-admins --limit 200 --active-days 30
+links build-links --window 30
+links export-graph --format json
+```
+
+Artifacts are written to:
+
+```
+artifacts/graphs/
+```
+
+### Ethical Guardrails
+
+- Public data only
+- No hidden inference
+- Sliding window derivation
+- Experimental research purpose

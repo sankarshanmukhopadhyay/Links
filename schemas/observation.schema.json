@@ -1,0 +1,34 @@
+{
+  "$id": "https://links.local/schema/observation.json",
+  "type": "object",
+  "required": [
+    "observation_id",
+    "timestamp",
+    "actor_entity_id",
+    "kind"
+  ],
+  "properties": {
+    "observation_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor_entity_id": {
+      "type": "string"
+    },
+    "target_entity_id": {
+      "type": "string"
+    },
+    "context": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "evidence_uri": {
+      "type": "string"
+    }
+  }
+}

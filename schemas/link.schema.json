@@ -1,0 +1,27 @@
+{
+  "$id": "https://links.local/schema/link.json",
+  "type": "object",
+  "required": [
+    "from_entity_id",
+    "to_entity_id",
+    "weight",
+    "window_days"
+  ],
+  "properties": {
+    "from_entity_id": {
+      "type": "string"
+    },
+    "to_entity_id": {
+      "type": "string"
+    },
+    "weight": {
+      "type": "number"
+    },
+    "window_days": {
+      "type": "integer"
+    },
+    "derivation": {
+      "type": "string"
+    }
+  }
+}
