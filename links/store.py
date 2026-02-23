@@ -10,14 +10,33 @@ from .claims import ClaimBundle, verify_bundle, iso_utc
 def ensure_dirs(store_root: Path) -> None:
     (store_root / "bundles").mkdir(parents=True, exist_ok=True)
     (store_root / "index").mkdir(parents=True, exist_ok=True)
+    (store_root / "quarantine").mkdir(parents=True, exist_ok=True)
+    (store_root / "rejected").mkdir(parents=True, exist_ok=True)
+    (store_root / "audit").mkdir(parents=True, exist_ok=True)
 
 
 def ingest_bundle_file(bundle_path: Path, store_root: Path = Path("data/store")) -> tuple[bool, str]:
+    """
+    Ingest a signed bundle into the store:
+      - verify signature + bundle_id
+      - store bundle under bundles/[village_id]/bundle_id.json (if village_id present)
+      - append flattened claim rows to index/claims.jsonl
+
+    Policy enforcement happens at the village boundary (server/CLI).
+    """
+    ensure_dirs(store_root)
     bundle = ClaimBundle.model_validate_json(bundle_path.read_text(encoding="utf-8"))
     if not verify_bundle(bundle):
         return False, "bundle failed verification (signature and/or bundle_id mismatch)"
-    ensure_dirs(store_root)
-    bundle_out = store_root / "bundles" / f"{bundle.bundle_id}.json"
+
+    # partition by village_id if present
+    subdir = store_root / "bundles"
+    village_id = getattr(bundle, "village_id", None)
+    if village_id:
+        subdir = subdir / str(village_id)
+        subdir.mkdir(parents=True, exist_ok=True)
+
+    bundle_out = subdir / f"{bundle.bundle_id}.json"
     bundle_out.write_text(bundle.model_dump_json(indent=2), encoding="utf-8")
 
     idx = store_root / "index" / "claims.jsonl"
@@ -29,11 +48,14 @@ def ingest_bundle_file(bundle_path: Path, store_root: Path = Path("data/store"))
                 "issuer": bundle.issuer,
                 "window_days": bundle.window_days,
                 "created_at": iso_utc(bundle.created_at),
+                "village_id": village_id,
+                "visibility": getattr(bundle, "visibility", None),
                 **c.model_dump(),
                 "computed_at": iso_utc(c.computed_at),
             }
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
             n += 1
+
     return True, f"ingested bundle {bundle.bundle_id} with {n} claims"
 
 
@@ -51,7 +73,7 @@ def iter_claim_rows(store_root: Path = Path("data/store")) -> Iterable[dict]:
     return _gen()
 
 
-def query_claims(subject: Optional[str] = None, issuer: Optional[str] = None, predicate: Optional[str] = None, store_root: Path = Path("data/store")) -> list[dict]:
+def query_claims(subject: Optional[str] = None, issuer: Optional[str] = None, predicate: Optional[str] = None, village_id: Optional[str] = None, store_root: Path = Path("data/store")) -> list[dict]:
     out = []
     for row in iter_claim_rows(store_root):
         if subject and row.get("subject") != subject:
@@ -59,6 +81,8 @@ def query_claims(subject: Optional[str] = None, issuer: Optional[str] = None, pr
         if issuer and row.get("issuer") != issuer:
             continue
         if predicate and row.get("predicate") != predicate:
+            continue
+        if village_id and row.get("village_id") != village_id:
             continue
         out.append(row)
     return out

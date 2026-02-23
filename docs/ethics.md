@@ -24,3 +24,11 @@ This repository implements *reputation-adjacent* infrastructure. That category i
 - This does not assert “true reputation”.
 - This does not create global rankings of people.
 - This does not guarantee fairness across communities without governance.
+
+## Issuer controls
+
+Villages can restrict which issuers (public keys) may submit bundles. This reduces poisoning risk and supports explicit trust boundaries.
+
+## Quarantine and review
+
+Policy failures can be quarantined for review. This supports a human-in-the-loop safety valve for valid-but-harmful or context-mismatched bundles.

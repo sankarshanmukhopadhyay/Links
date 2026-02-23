@@ -76,6 +76,66 @@
         },
         "rate_limit_per_min": {
           "type": "integer"
+        },
+        "issuer_allowlist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowed issuer key hashes (sha256 of public key). Empty => allow all except blocklist."
+        },
+        "issuer_blocklist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Blocked issuer key hashes."
+        },
+        "require_issuer_allowlist": {
+          "type": "boolean",
+          "description": "If true, allowlist must be non-empty and issuer must be present."
+        },
+        "capabilities": {
+          "type": "object",
+          "description": "Role-based permissions",
+          "properties": {
+            "observer": {
+              "type": "object",
+              "properties": {
+                "can_pull": {
+                  "type": "boolean"
+                },
+                "can_push": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "member": {
+              "type": "object",
+              "properties": {
+                "can_pull": {
+                  "type": "boolean"
+                },
+                "can_push": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "admin": {
+              "type": "object",
+              "properties": {
+                "can_pull": {
+                  "type": "boolean"
+                },
+                "can_push": {
+                  "type": "boolean"
+                },
+                "can_manage": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
         }
       }
     }

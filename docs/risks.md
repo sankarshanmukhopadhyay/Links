@@ -20,3 +20,11 @@ Mitigation: store token hashes only; rotate and revoke; prefer TLS in deployment
 
 ## R7 Mission creep
 Mitigation: explicit policy and “inference budget”; retention/minimization defaults; governance before expansion.
+
+
+## Governance hardening additions
+
+- Issuer allow/block lists per village
+- Token revocation and rotation
+- Quarantine + approval/rejection workflow
+- Append-only audit log for decisions
