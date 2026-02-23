@@ -39,6 +39,10 @@ class VillagePolicy(BaseModel):
     # Governance hardening
     issuer_allowlist: list[str] = Field(default_factory=list, description="Allowed issuer key hashes (sha256 of public key).")
     issuer_blocklist: list[str] = Field(default_factory=list, description="Blocked issuer key hashes.")
+    issuer_id_allowlist: list[str] = Field(default_factory=list, description="Allowed issuer IDs (bundle.issuer).")
+    issuer_id_blocklist: list[str] = Field(default_factory=list, description="Blocked issuer IDs (bundle.issuer).")
+    require_policy_signature: bool = False
+    policy_signer_allowlist: list[str] = Field(default_factory=list, description="Allowed policy signer key hashes.")
     require_issuer_allowlist: bool = False
 
     # Role permissions
@@ -272,3 +276,34 @@ def role_can(policy: VillagePolicy, role: str, action: str) -> bool:
     if action == "manage":
         return bool(cap.can_manage)
     return False
+
+
+def issuer_id_allowed(policy: VillagePolicy, issuer_id: str) -> bool:
+    if issuer_id in set(policy.issuer_id_blocklist):
+        return False
+    if policy.issuer_id_allowlist:
+        return issuer_id in set(policy.issuer_id_allowlist)
+    return True
+
+
+def policy_history_path(root: Path, village_id: str) -> Path:
+    return village_dir(root, village_id) / "policy_history.jsonl"
+
+
+def append_policy_history(root: Path, village_id: str, update_obj: dict) -> None:
+    p = policy_history_path(root, village_id)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.touch(exist_ok=True)
+    with p.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(update_obj, ensure_ascii=False) + "\n")
+
+
+def apply_policy_update(root: Path, village_id: str, policy_obj: dict, actor: Optional[str] = None, update_meta: Optional[dict] = None) -> None:
+    v = load_village(root, village_id)
+    # preserve capabilities defaults if missing from incoming policy
+    incoming = VillagePolicy.model_validate(policy_obj)
+    v = v.model_copy(update={"policy": incoming})
+    save_village(root, v)
+    if update_meta is None:
+        update_meta = {"actor": actor, "ts": iso_utc(utc_now())}
+    append_policy_history(root, village_id, {"policy": incoming.model_dump(), **update_meta})

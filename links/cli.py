@@ -2,17 +2,23 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+import base64
 import secrets
 import typer
 import requests
 
+from nacl.signing import SigningKey
+
 from links.server import create_app
 from links.store import ingest_bundle_file, query_claims
 from links.villages import (
-    Village, VillageGovernance, VillagePolicy, save_village, load_village, save_village_policy,
+    Village, VillageGovernance, VillagePolicy, save_village, load_village,
     add_member, revoke_member, rotate_member_token,
     issuer_key_hash_from_public_key_b64, add_issuer_allow, add_issuer_block,
+    apply_policy_update,
 )
+from links.policy_updates import build_update, sign_update, verify_update, VillagePolicyUpdate
+from links.keys import generate_ed25519_keypair
 from links.quarantine import list_quarantine, approve_quarantine, reject_quarantine
 
 app = typer.Typer(help="Links: verifiable claim exchange with group policy controls.")
@@ -20,11 +26,13 @@ villages_app = typer.Typer(help="Group governance and policy controls")
 claims_app = typer.Typer(help="Store operations for bundles")
 sync_app = typer.Typer(help="HTTP sync helpers")
 quarantine_app = typer.Typer(help="Review workflow for quarantined bundles")
+policy_app = typer.Typer(help="Policy update artifacts and application")
 
 app.add_typer(villages_app, name="villages")
 app.add_typer(claims_app, name="claims")
 app.add_typer(sync_app, name="sync")
 app.add_typer(quarantine_app, name="quarantine")
+app.add_typer(policy_app, name="policy")
 
 
 @villages_app.command("create")
@@ -81,15 +89,15 @@ def villages_rotate_token(village_id: str, member_id: str, actor: str = "admin")
     typer.echo(token)
 
 
-@villages_app.command("allow-issuer")
-def villages_allow_issuer(village_id: str, public_key_b64: str, actor: str = "admin"):
+@villages_app.command("allow-issuer-key")
+def villages_allow_issuer_key(village_id: str, public_key_b64: str, actor: str = "admin"):
     kh = issuer_key_hash_from_public_key_b64(public_key_b64)
     add_issuer_allow(Path("data"), village_id, issuer_key_hash=kh, actor=actor)
     typer.echo(f"Allowed issuer key hash: {kh}")
 
 
-@villages_app.command("block-issuer")
-def villages_block_issuer(village_id: str, public_key_b64: str, actor: str = "admin"):
+@villages_app.command("block-issuer-key")
+def villages_block_issuer_key(village_id: str, public_key_b64: str, actor: str = "admin"):
     kh = issuer_key_hash_from_public_key_b64(public_key_b64)
     add_issuer_block(Path("data"), village_id, issuer_key_hash=kh, actor=actor)
     typer.echo(f"Blocked issuer key hash: {kh}")
@@ -99,6 +107,66 @@ def villages_block_issuer(village_id: str, public_key_b64: str, actor: str = "ad
 def villages_show(village_id: str):
     v = load_village(Path("data"), village_id)
     typer.echo(v.model_dump_json(indent=2))
+
+
+@policy_app.command("gen-key")
+def policy_gen_key(out_dir: Path = Path("keys/policy")):
+    priv, pub = generate_ed25519_keypair(out_dir)
+    typer.echo(f"Wrote policy signing key seed to {priv}")
+    typer.echo(f"Wrote policy public key to {pub}")
+
+
+@policy_app.command("export")
+def policy_export(village_id: str, out: Path = Path("artifacts/policy_update.json"), actor: str = "admin"):
+    v = load_village(Path("data"), village_id)
+    u = build_update(village_id=village_id, policy=v.policy.model_dump(), actor=actor)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(u.model_dump_json(indent=2), encoding="utf-8")
+    typer.echo(f"Wrote policy update artifact to {out}")
+
+
+@policy_app.command("sign")
+def policy_sign(inp: Path = Path("artifacts/policy_update.json"), key: Path = Path("keys/policy/ed25519.key"), out: Path = Path("artifacts/policy_update.signed.json")):
+    u = VillagePolicyUpdate.model_validate_json(inp.read_text(encoding="utf-8"))
+    seed = base64.b64decode(key.read_text(encoding="utf-8").strip())
+    sk = SigningKey(seed[:32])
+    s = sign_update(u, sk)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(s.model_dump_json(indent=2), encoding="utf-8")
+    typer.echo(f"Signed policy update -> {out}")
+
+
+@policy_app.command("verify")
+def policy_verify(inp: Path = Path("artifacts/policy_update.signed.json")):
+    u = VillagePolicyUpdate.model_validate_json(inp.read_text(encoding="utf-8"))
+    ok = verify_update(u)
+    typer.echo("OK" if ok else "FAIL")
+    raise typer.Exit(code=0 if ok else 1)
+
+
+@policy_app.command("apply-local")
+def policy_apply_local(village_id: str, inp: Path, actor: str = "admin"):
+    body = json.loads(inp.read_text(encoding="utf-8"))
+    if "policy" in body and "policy_hash" in body:
+        u = VillagePolicyUpdate.model_validate(body)
+        if u.public_key or u.signature:
+            if not verify_update(u):
+                raise typer.Exit(code=1)
+        apply_policy_update(Path("data"), village_id, u.policy, actor=actor, update_meta={"policy_update": "local", "policy_hash": u.policy_hash})
+    else:
+        apply_policy_update(Path("data"), village_id, body, actor=actor, update_meta={"policy_update": "local-plain"})
+    typer.echo("Applied policy locally.")
+
+
+@policy_app.command("apply-remote")
+def policy_apply_remote(url: str, village_id: str, token: str, inp: Path):
+    endpoint = url.rstrip("/") + f"/villages/{village_id}/policy"
+    payload = json.loads(inp.read_text(encoding="utf-8"))
+    r = requests.post(endpoint, headers={"Authorization": f"Bearer {token}"}, json=payload, timeout=30)
+    if r.status_code >= 400:
+        typer.echo(r.text)
+        raise typer.Exit(code=1)
+    typer.echo(r.text)
 
 
 @claims_app.command("ingest")

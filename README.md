@@ -98,3 +98,27 @@ These docs are part of the deliverable: if you deploy this system, treat them as
 - `GET /villages/{village_id}/claims/latest` (Bearer token required)
 - `POST /inbox`
 - `POST /villages/{village_id}/inbox` (Bearer token + policy enforcement)
+
+
+## Policy updates
+
+Village policies can be updated through an admin-gated API endpoint. Updates can be provided as plain policy objects or as signed policy update artifacts.
+
+### Update policy remotely (admin token required)
+
+```bash
+links policy export ops --out artifacts/policy_update.json
+links policy apply-remote http://127.0.0.1:8080 ops <ADMIN_TOKEN> artifacts/policy_update.json
+```
+
+### Signed policy updates (recommended for stronger governance)
+
+```bash
+links policy gen-key --out-dir keys/policy
+links policy export ops --out artifacts/policy_update.json
+links policy sign --in artifacts/policy_update.json --key keys/policy/ed25519.key --out artifacts/policy_update.signed.json
+links policy verify --in artifacts/policy_update.signed.json
+links policy apply-remote http://127.0.0.1:8080 ops <ADMIN_TOKEN> artifacts/policy_update.signed.json
+```
+
+If a village is configured with `require_policy_signature=true`, the server will require a valid signature and can restrict which policy signers are permitted via `policy_signer_allowlist`.

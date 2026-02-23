@@ -1,0 +1,37 @@
+{
+  "$id": "https://links.local/schema/village_policy_update.json",
+  "type": "object",
+  "required": [
+    "village_id",
+    "created_at",
+    "policy",
+    "policy_hash"
+  ],
+  "properties": {
+    "village_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "type": "string"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "policy_hash": {
+      "type": "string"
+    },
+    "signature_alg": {
+      "type": "string"
+    },
+    "public_key": {
+      "type": "string"
+    },
+    "signature": {
+      "type": "string"
+    }
+  }
+}

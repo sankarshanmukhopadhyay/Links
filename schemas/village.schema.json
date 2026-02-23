@@ -136,6 +136,31 @@
               }
             }
           }
+        },
+        "issuer_id_allowlist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowed issuer IDs (bundle.issuer)."
+        },
+        "issuer_id_blocklist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Blocked issuer IDs (bundle.issuer)."
+        },
+        "require_policy_signature": {
+          "type": "boolean",
+          "description": "If true, policy updates must include a valid signature."
+        },
+        "policy_signer_allowlist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowed policy signer key hashes (sha256 of policy public key). Empty => allow any signer when require_policy_signature=false."
         }
       }
     }
