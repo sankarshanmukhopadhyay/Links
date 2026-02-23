@@ -5,6 +5,8 @@ import json
 import base64
 import secrets
 import typer
+from links.validate import validate_village_id
+
 import requests
 
 from nacl.signing import SigningKey

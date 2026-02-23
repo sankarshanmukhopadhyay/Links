@@ -8,7 +8,13 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from .file_lock import locked_open
+from .validate import validate_village_id
+
 from .audit import write_audit, AuditEvent, policy_hash
+
+# Default store root for audit events
+store_root = Path(\"data/store\")
 
 
 def utc_now() -> datetime:
@@ -76,6 +82,7 @@ class VillageMember(BaseModel):
 
 
 def village_dir(root: Path, village_id: str) -> Path:
+    validate_village_id(village_id)
     return root / "villages" / village_id
 
 
@@ -130,14 +137,14 @@ def is_token_revoked(root: Path, village_id: str, token_hash: str) -> bool:
 def revoke_token_hash(root: Path, village_id: str, token_hash: str, actor: Optional[str] = None, reason: str = "revoked") -> None:
     rp = _revocations_path(root, village_id)
     rp.parent.mkdir(parents=True, exist_ok=True)
-    with rp.open("a", encoding="utf-8") as f:
+    with locked_open(rp, "a") as f:
         f.write(json.dumps({
             "ts": iso_utc(utc_now()),
             "token_hash": token_hash,
             "actor": actor,
             "reason": reason,
         }, ensure_ascii=False) + "\n")
-    write_audit(Path("data/store"), AuditEvent(action="member.revoke", village_id=village_id, actor=actor, reason=reason))
+    write_audit(store_root, AuditEvent(action="member.revoke", village_id=village_id, actor=actor, reason=reason))
 
 
 def add_member(root: Path, village_id: str, member_id: str, role: str, token_plain: str, actor: Optional[str] = None) -> VillageMember:
@@ -152,7 +159,7 @@ def add_member(root: Path, village_id: str, member_id: str, role: str, token_pla
         is_revoked=False,
     )
     mp = _members_path(root, village_id)
-    with mp.open("a", encoding="utf-8") as f:
+    with locked_open(mp, "a") as f:
         f.write(json.dumps({
             "member_id": m.member_id,
             "role": m.role,
@@ -160,7 +167,7 @@ def add_member(root: Path, village_id: str, member_id: str, role: str, token_pla
             "token_hash": m.token_hash,
             "is_revoked": False,
         }, ensure_ascii=False) + "\n")
-    write_audit(Path("data/store"), AuditEvent(action="member.add", village_id=village_id, actor=actor, reason=f"role={role}"))
+    write_audit(store_root, AuditEvent(action="member.add", village_id=village_id, actor=actor, reason=f"role={role}"))
     return m
 
 
@@ -216,7 +223,7 @@ def rotate_member_token(root: Path, village_id: str, member_id: str, new_token_p
             role = m.get("role", "member")
             break
     add_member(root, village_id, member_id, role=role, token_plain=new_token_plain, actor=actor)
-    write_audit(Path("data/store"), AuditEvent(action="member.rotate", village_id=village_id, actor=actor, reason=f"member_id={member_id}"))
+    write_audit(store_root, AuditEvent(action="member.rotate", village_id=village_id, actor=actor, reason=f"member_id={member_id}"))
 
 
 def issuer_key_hash_from_public_key_b64(public_key_b64: str) -> str:
@@ -242,7 +249,7 @@ def add_issuer_allow(root: Path, village_id: str, issuer_key_hash: str, actor: O
     if issuer_key_hash in v.policy.issuer_blocklist:
         v.policy.issuer_blocklist.remove(issuer_key_hash)
     save_village(root, v)
-    write_audit(Path("data/store"), AuditEvent(action="issuer.allow", village_id=village_id, actor=actor, issuer_key_hash=issuer_key_hash, policy_hash=policy_hash(v.policy.model_dump())))
+    write_audit(store_root, AuditEvent(action="issuer.allow", village_id=village_id, actor=actor, issuer_key_hash=issuer_key_hash, policy_hash=policy_hash(v.policy.model_dump())))
 
 
 def add_issuer_block(root: Path, village_id: str, issuer_key_hash: str, actor: Optional[str] = None) -> None:
@@ -250,7 +257,7 @@ def add_issuer_block(root: Path, village_id: str, issuer_key_hash: str, actor: O
     if issuer_key_hash not in v.policy.issuer_blocklist:
         v.policy.issuer_blocklist.append(issuer_key_hash)
     save_village(root, v)
-    write_audit(Path("data/store"), AuditEvent(action="issuer.block", village_id=village_id, actor=actor, issuer_key_hash=issuer_key_hash, policy_hash=policy_hash(v.policy.model_dump())))
+    write_audit(store_root, AuditEvent(action="issuer.block", village_id=village_id, actor=actor, issuer_key_hash=issuer_key_hash, policy_hash=policy_hash(v.policy.model_dump())))
 
 
 def enforce_policy_on_bundle(village: Village, bundle: dict) -> tuple[bool, str]:
@@ -294,7 +301,7 @@ def append_policy_history(root: Path, village_id: str, update_obj: dict) -> None
     p = policy_history_path(root, village_id)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.touch(exist_ok=True)
-    with p.open("a", encoding="utf-8") as f:
+    with locked_open(p, "a") as f:
         f.write(json.dumps(update_obj, ensure_ascii=False) + "\n")
 
 

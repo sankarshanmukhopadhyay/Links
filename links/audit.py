@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+from .file_lock import locked_open
+
 
 def iso_utc(dt: datetime) -> str:
     if dt.tzinfo is None:
@@ -19,7 +21,7 @@ def utc_now() -> datetime:
 
 @dataclass(frozen=True)
 class AuditEvent:
-    action: str  # ingest.accept | ingest.reject | ingest.quarantine | member.revoke | member.rotate | issuer.block | issuer.allow
+    action: str
     bundle_id: Optional[str] = None
     village_id: Optional[str] = None
     issuer_key_hash: Optional[str] = None
@@ -29,8 +31,8 @@ class AuditEvent:
 
 
 def policy_hash(policy_obj: dict) -> str:
-    import hashlib, json
-    b = json.dumps(policy_obj, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    import hashlib, json as _json
+    b = _json.dumps(policy_obj, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(b).hexdigest()[:16]
 
 
@@ -47,5 +49,5 @@ def write_audit(store_root: Path, ev: AuditEvent) -> None:
         "reason": ev.reason,
         "policy_hash": ev.policy_hash,
     }
-    with p.open("a", encoding="utf-8") as f:
+    with locked_open(p, "a") as f:
         f.write(json.dumps(row, ensure_ascii=False) + "\n")

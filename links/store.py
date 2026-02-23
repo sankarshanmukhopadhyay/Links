@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional, Iterable
 
 from .claims import ClaimBundle, verify_bundle, iso_utc
+from .file_lock import locked_open
 
 
 def ensure_dirs(store_root: Path) -> None:
@@ -20,16 +21,13 @@ def ingest_bundle_file(bundle_path: Path, store_root: Path = Path("data/store"))
     Ingest a signed bundle into the store:
       - verify signature + bundle_id
       - store bundle under bundles/[village_id]/bundle_id.json (if village_id present)
-      - append flattened claim rows to index/claims.jsonl
-
-    Policy enforcement happens at the village boundary (server/CLI).
+      - append flattened claim rows to index/claims.jsonl (locked)
     """
     ensure_dirs(store_root)
     bundle = ClaimBundle.model_validate_json(bundle_path.read_text(encoding="utf-8"))
     if not verify_bundle(bundle):
         return False, "bundle failed verification (signature and/or bundle_id mismatch)"
 
-    # partition by village_id if present
     subdir = store_root / "bundles"
     village_id = getattr(bundle, "village_id", None)
     if village_id:
@@ -41,7 +39,7 @@ def ingest_bundle_file(bundle_path: Path, store_root: Path = Path("data/store"))
 
     idx = store_root / "index" / "claims.jsonl"
     n = 0
-    with idx.open("a", encoding="utf-8") as f:
+    with locked_open(idx, "a") as f:
         for c in bundle.claims:
             row = {
                 "bundle_id": bundle.bundle_id,

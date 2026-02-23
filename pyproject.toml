@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "links"
-version = "0.6.0"
+version = "0.7.0"
 description = "Python scripts for Links repo"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -22,3 +22,6 @@ where = ["src"]
 
 [project.scripts]
 links = "links.cli:app"
+
+[tool.setuptools]
+packages = ["links"]
