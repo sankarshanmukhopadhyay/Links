@@ -36,6 +36,16 @@
     },
     "signature_alg": {
       "type": "string"
+    },
+    "village_id": {
+      "type": "string"
+    },
+    "visibility": {
+      "enum": [
+        "private",
+        "village",
+        "public"
+      ]
     }
   }
 }

@@ -1,0 +1,29 @@
+{
+  "$id": "https://links.local/schema/village_member.json",
+  "type": "object",
+  "required": [
+    "member_id",
+    "role",
+    "added_at",
+    "token_hash"
+  ],
+  "properties": {
+    "member_id": {
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "admin",
+        "member",
+        "observer"
+      ]
+    },
+    "added_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "token_hash": {
+      "type": "string"
+    }
+  }
+}

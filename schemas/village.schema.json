@@ -1,0 +1,83 @@
+{
+  "$id": "https://links.local/schema/village.json",
+  "type": "object",
+  "required": [
+    "village_id",
+    "name",
+    "created_at",
+    "governance",
+    "policy"
+  ],
+  "properties": {
+    "village_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "governance": {
+      "type": "object",
+      "required": [
+        "admins",
+        "decision_model"
+      ],
+      "properties": {
+        "admins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decision_model": {
+          "type": "string"
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "visibility",
+        "allowed_predicates",
+        "max_window_days",
+        "min_signature_alg"
+      ],
+      "properties": {
+        "visibility": {
+          "enum": [
+            "private",
+            "village",
+            "public"
+          ]
+        },
+        "allowed_predicates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "max_window_days": {
+          "type": "integer"
+        },
+        "min_signature_alg": {
+          "type": "string"
+        },
+        "allow_unverified": {
+          "type": "boolean"
+        },
+        "retention_days": {
+          "type": "integer"
+        },
+        "rate_limit_per_min": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

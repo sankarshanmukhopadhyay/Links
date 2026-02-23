@@ -323,3 +323,28 @@ links claims query --subject wikipedia:en:Alice
 links serve --host 127.0.0.1 --port 8080
 links sync pull http://127.0.0.1:8080
 ```
+
+## Villages (Phase 4): access control + norms
+
+Villages are scoped groups that define membership, access control, and policy norms for claims.
+
+### Create a village
+```bash
+links villages create ops "Ops Village" alice
+```
+
+### Add a member
+```bash
+links villages add-member ops bob --role member
+```
+
+### Push/pull village bundles
+```bash
+links serve --host 127.0.0.1 --port 8080
+links sync push-village http://127.0.0.1:8080 ops <TOKEN> --bundle artifacts/claims/claim_bundle.signed.json
+links sync pull-village http://127.0.0.1:8080 ops <TOKEN>
+```
+
+Ethical safeguards and risk register:
+- docs/ethics.md
+- docs/risks.md
