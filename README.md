@@ -245,3 +245,41 @@ artifacts/graphs/
 - No hidden inference
 - Sliding window derivation
 - Experimental research purpose
+
+## Phase 2 MVP: Wikipedia admin interaction graph
+
+This repo can derive an explainable directed interaction graph from *public* Wikipedia activity.
+
+**MVP interaction definition:** if admin A edits the *User talk* page of admin B within the window, we emit an observation and derive an edge A → B.
+
+### Quickstart
+
+```bash
+pip install -e .
+
+# 1) Sample admins and mark active (last edit within N days)
+links wikipedia admins --limit 200 --active-days 30
+
+# 2) Ingest interactions (User talk edits among active admins) within window
+links wikipedia mentions --window-days 30 --per-user-limit 200
+
+# 3) Validate + normalize observations
+links wikipedia normalize
+
+# 4) Derive links and export graph artifacts (JSON edges + GraphML for Gephi)
+links wikipedia build-links --window-days 30
+```
+
+Outputs:
+- `data/raw/wikipedia_admins.jsonl`
+- `data/raw/wikipedia_observations.jsonl`
+- `data/normalized/observations.jsonl`
+- `artifacts/graphs/wikipedia_admins_edges_30d.json`
+- `artifacts/graphs/wikipedia_admins_30d.graphml`
+
+### Ethical guardrails
+
+- Public data only
+- No hidden inference beyond the defined interaction rule
+- Sliding window derivation (default 30 days)
+- Artifacts are explainable and inspectable (observations → links)
