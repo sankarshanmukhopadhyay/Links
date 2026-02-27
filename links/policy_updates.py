@@ -10,6 +10,8 @@ from pydantic import BaseModel, Field
 from nacl.signing import SigningKey, VerifyKey
 from nacl.exceptions import BadSignatureError
 
+from .crypto import verify_bytes
+
 
 # -----------------------------
 # Helpers
@@ -58,8 +60,9 @@ def compute_policy_hash(policy: dict) -> str:
 # -----------------------------
 
 class SignatureEntry(BaseModel):
-    public_key: str  # base64 (Ed25519 public key bytes)
+    public_key: str  # base64 (public key bytes or PEM, depending on alg)
     signature: str   # base64
+    alg: str = "ed25519"  # ed25519|ecdsa_p256
 
 
 class QuorumRequirement(BaseModel):
@@ -102,6 +105,7 @@ class VillagePolicyUpdate(BaseModel):
     village_id: str
     created_at: datetime
     actor: Optional[str] = None
+    expires_at: Optional[datetime] = Field(default=None, description="If set, the update must not be applied after this time")
 
     # The effective policy content (for the requested lifecycle state).
     policy: dict = Field(default_factory=dict)
@@ -240,11 +244,11 @@ def verify_update_any(u: VillagePolicyUpdate) -> bool:
     payload = payload_for_signing(u)
 
     for e in (u.signatures or []):
-        if _verify_one(payload, e.public_key, e.signature):
+        if _verify_one(payload, e.public_key, e.signature, getattr(e, 'alg', 'ed25519')):
             return True
 
     if u.public_key and u.signature:
-        return _verify_one(payload, u.public_key, u.signature)
+        return _verify_one(payload, u.public_key, u.signature, 'ed25519')
 
     return False
 
@@ -268,13 +272,13 @@ def verify_update_quorum(
         kh = key_hash_from_public_key_b64(e.public_key)
         if allow and kh not in allow:
             continue
-        if _verify_one(payload, e.public_key, e.signature):
+        if _verify_one(payload, e.public_key, e.signature, getattr(e, 'alg', 'ed25519')):
             valid_signers.add(kh)
 
     if u.public_key and u.signature:
         kh = key_hash_from_public_key_b64(u.public_key)
         if (not allow) or (kh in allow):
-            if _verify_one(payload, u.public_key, u.signature):
+            if _verify_one(payload, u.public_key, u.signature, 'ed25519'):
                 valid_signers.add(kh)
 
     if len(valid_signers) >= required_m:
@@ -312,7 +316,7 @@ def verify_update_weighted_quorum(
             return
         if allow and kh not in allow:
             return
-        if not _verify_one(payload, pub_b64, sig_b64):
+        if not _verify_one(payload, pub_b64, sig_b64, 'ed25519'):
             return
         w = float(weights_by_key_hash.get(kh, 0.0))
         achieved += w
@@ -354,7 +358,7 @@ def verify_update_role_based_quorum(
             return
         if allow and kh not in allow:
             return
-        if not _verify_one(payload, pub_b64, sig_b64):
+        if not _verify_one(payload, pub_b64, sig_b64, 'ed25519'):
             return
         counted.add(kh)
         for role in roles_by_key_hash.get(kh, []):

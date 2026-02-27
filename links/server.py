@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Dict, Tuple
 
 from fastapi import FastAPI, Header, HTTPException, Query, Request
+from fastapi.responses import StreamingResponse
 from nacl.signing import SigningKey
 
 from .policy_feed import (
@@ -21,6 +22,9 @@ from .policy_feed import (
 )
 from .policy_updates import VillagePolicyUpdate, build_update
 from .validate import validate_village_id
+from .audit_export import export_audit_json, export_audit_csv, sign_digest_hex
+from .keys import load_signing_key_from_env
+from .file_lock import locked_open
 
 # Optional: if a richer villages module exists, use it for auth + apply + policy lookup.
 try:
@@ -39,7 +43,7 @@ def _bearer_token(authorization: str | None) -> str | None:
 
 
 def create_app(store_root: Path = Path("data/store"), villages_root: Path = Path("data")) -> FastAPI:
-    app = FastAPI(title="Links Claim Exchange", version="0.10.0")
+    app = FastAPI(title="Links Claim Exchange", version="0.11.0")
 
     # Simple in-memory per-village rate limiter (minute bucket).
     # NOTE: In production, put Links behind a proper gateway (Envoy/Nginx) with real rate limiting.
@@ -188,4 +192,80 @@ def create_app(store_root: Path = Path("data/store"), villages_root: Path = Path
             )
         return {"status": "ok", "village_id": village_id, "policy_hash": u.policy_hash}
 
+    
+@app.get("/public/villages/{village_id}/policy/latest")
+def public_latest_policy(village_id: str):
+    """Unauthenticated read-only policy endpoint (opt-in)."""
+    validate_village_id(village_id)
+    # opt-in via env or per-village policy flag
+    import os
+    env_ok = os.environ.get("LINKS_PUBLIC_POLICY", "").strip().lower() in {"1", "true", "yes"}
+    per_village_ok = False
+    if load_village is not None:
+        try:
+            v = load_village(villages_root, village_id)
+            per_village_ok = bool(getattr(v.policy, "public_policy_endpoint", False)) or getattr(v.policy, "visibility", "private") == "public"
+        except Exception:
+            per_village_ok = False
+    if not (env_ok or per_village_ok):
+        raise HTTPException(status_code=404, detail="public policy endpoint not enabled")
+    u = latest_policy_update(store_root, village_id)
+    if not u:
+        raise HTTPException(status_code=404, detail="no policy updates found")
+    return u.model_dump()
+    
+    
+@app.get("/villages/{village_id}/transparency/policy_log")
+def transparency_policy_log(village_id: str, limit: int = Query(default=500, ge=1, le=5000)):
+    """Return recent transparency log entries (JSONL)."""
+    validate_village_id(village_id)
+    p = store_root / "transparency" / village_id / "policy_log.jsonl"
+    if not p.exists():
+        raise HTTPException(status_code=404, detail="no transparency log")
+
+    def _iter():
+        # Stream from the end-ish: for now, simple full read capped by limit
+        with locked_open(p, "r") as f:
+            lines = f.readlines()
+        for line in lines[-limit:]:
+            yield line
+
+    return StreamingResponse(_iter(), media_type="application/x-ndjson")
+    
+    
+@app.get("/villages/{village_id}/audit/export")
+def audit_export(village_id: str, fmt: str = Query(default="json", pattern="^(json|csv)$"), sign: bool = Query(default=True)):
+    """Export audit log for a village (best-effort filter) with optional digest signing."""
+    validate_village_id(village_id)
+    audit_path = store_root / "audit" / "audit.log.jsonl"
+    if not audit_path.exists():
+        raise HTTPException(status_code=404, detail="no audit log")
+    out_dir = store_root / "audit" / "exports" / village_id
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"audit.{fmt}"
+    # NOTE: audit log is global; export currently filters at read-time by village_id.
+    tmp = out_dir / "audit.filtered.jsonl"
+    with locked_open(audit_path, "r") as f_in, locked_open(tmp, "w") as f_out:
+        for line in f_in:
+            try:
+                ev = json.loads(line)
+            except Exception:
+                continue
+            if ev.get("village_id") == village_id:
+                f_out.write(json.dumps(ev, ensure_ascii=False, sort_keys=True) + "\\n")
+    if fmt == "json":
+        digest, count = export_audit_json(tmp, out_path)
+    else:
+        digest, count = export_audit_csv(tmp, out_path)
+    sig_hex = None
+    if sign:
+        try:
+            sk = load_signing_key_from_env()
+            sig_hex = sign_digest_hex(digest, sk)
+            (out_path.with_suffix(out_path.suffix + ".sha256")).write_text(digest + "\\n", encoding="utf-8")
+            (out_path.with_suffix(out_path.suffix + ".sighex")).write_text(sig_hex + "\\n", encoding="utf-8")
+        except Exception:
+            pass
+    return {"village_id": village_id, "format": fmt, "count": count, "sha256": digest, "signed": bool(sig_hex)}
+    
     return app

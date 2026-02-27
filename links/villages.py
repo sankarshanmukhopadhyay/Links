@@ -12,6 +12,8 @@ from .file_lock import locked_open
 from .validate import validate_village_id
 
 from .audit import write_audit, AuditEvent, policy_hash
+from .transparency import append_transparency_entry
+from .keys import load_signing_key_from_env
 
 # Default store root for audit events
 store_root = Path("data/store")
@@ -41,6 +43,10 @@ class VillagePolicy(BaseModel):
     allow_unverified: bool = False
     retention_days: int = 90
     rate_limit_per_min: int = 60
+    rate_limit_strategy: str = Field(default="fixed_window", description="fixed_window|token_bucket")
+    submission_quota_per_day: int = Field(default=0, description="0 means unlimited")
+    public_policy_endpoint: bool = Field(default=False, description="If true, allow unauthenticated read-only policy endpoint")
+    policy_update_expires_minutes: int = Field(default=0, description="0 means no expiry enforcement; otherwise updates must have expires_at within this window")
 
     # Governance hardening
     issuer_allowlist: list[str] = Field(default_factory=list, description="Allowed issuer key hashes (sha256 of public key).")
@@ -104,7 +110,9 @@ def save_village(root: Path, v: Village) -> Path:
     vd = village_dir(root, v.village_id)
     vd.mkdir(parents=True, exist_ok=True)
     p = vd / "village.json"
-    p.write_text(v.model_dump_json(indent=2), encoding="utf-8")
+    tmp = p.with_suffix(".json.tmp")
+    tmp.write_text(v.model_dump_json(indent=2), encoding="utf-8")
+    tmp.replace(p)
     _members_path(root, v.village_id).touch(exist_ok=True)
     _revocations_path(root, v.village_id).touch(exist_ok=True)
     return p
@@ -320,3 +328,9 @@ def apply_policy_update(root: Path, village_id: str, policy_obj: dict, actor: Op
     if update_meta is None:
         update_meta = {"actor": actor, "ts": iso_utc(utc_now())}
     append_policy_history(root, village_id, {"policy": incoming.model_dump(), **update_meta})
+    # Signed transparency log (best-effort)
+    try:
+        sk = load_signing_key_from_env()
+        append_transparency_entry(store_root, village_id, policy_hash(incoming.model_dump()), update_meta.get('policy_hash') if isinstance(update_meta, dict) else None, sk)
+    except Exception:
+        pass

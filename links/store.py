@@ -35,8 +35,16 @@ def ingest_bundle_file(bundle_path: Path, store_root: Path = Path("data/store"))
         subdir.mkdir(parents=True, exist_ok=True)
 
     bundle_out = subdir / f"{bundle.bundle_id}.json"
-    bundle_out.write_text(bundle.model_dump_json(indent=2), encoding="utf-8")
 
+    # Replay protection: reject if this bundle_id already exists in the store
+    if bundle_out.exists():
+        return False, "replay detected: bundle_id already ingested"
+    
+    # Atomic-ish write: write temp then replace
+    tmp_out = bundle_out.with_suffix(".json.tmp")
+    tmp_out.write_text(bundle.model_dump_json(indent=2), encoding="utf-8")
+    tmp_out.replace(bundle_out)
+    
     idx = store_root / "index" / "claims.jsonl"
     n = 0
     with locked_open(idx, "a") as f:

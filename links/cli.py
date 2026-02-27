@@ -224,3 +224,149 @@ def policy_drift(url: str, village_id: str, token: str = None):
             local_hash = None
 
     typer.echo(json.dumps({"village_id": village_id, "local_policy_hash": local_hash, "remote_policy_hash": remote_hash, "drift": (local_hash != remote_hash)}, indent=2))
+
+
+# -----------------------------
+# Audit / Observability
+# -----------------------------
+audit = typer.Typer(help="Audit trails, exports, and digests.")
+app.add_typer(audit, name="audit")
+
+@audit.command("export")
+def audit_export_cmd(village_id: str, fmt: str = typer.Option("json", help="json|csv"), out: Path = typer.Option(Path("audit_export"), help="Output dir"), sign: bool = typer.Option(True, help="Sign digest with node key (env LINKS_NODE_SIGNING_KEY_B64)")):
+    """Export audit log for a village to JSON or CSV and optionally sign the digest."""
+    from .audit_export import export_audit_json, export_audit_csv, sign_digest_hex
+    from .keys import load_signing_key_from_env
+    from .file_lock import locked_open
+    from .validate import validate_village_id
+    import json as _json
+
+    validate_village_id(village_id)
+    store_root = Path("data/store")
+    audit_path = store_root / "audit" / "audit.log.jsonl"
+    if not audit_path.exists():
+        raise typer.Exit(code=2)
+
+    out.mkdir(parents=True, exist_ok=True)
+    filtered = out / f"{village_id}.audit.filtered.jsonl"
+    with locked_open(audit_path, "r") as f_in, locked_open(filtered, "w") as f_out:
+        for line in f_in:
+            try:
+                ev = _json.loads(line)
+            except Exception:
+                continue
+            if ev.get("village_id") == village_id:
+                f_out.write(_json.dumps(ev, ensure_ascii=False, sort_keys=True) + "\n")
+
+    target = out / f"{village_id}.audit.{fmt}"
+    if fmt == "json":
+        digest, count = export_audit_json(filtered, target)
+    elif fmt == "csv":
+        digest, count = export_audit_csv(filtered, target)
+    else:
+        raise typer.BadParameter("fmt must be json or csv")
+
+    sig = None
+    if sign:
+        try:
+            sk = load_signing_key_from_env()
+            sig = sign_digest_hex(digest, sk)
+            (target.with_suffix(target.suffix + ".sha256")).write_text(digest + "\n", encoding="utf-8")
+            (target.with_suffix(target.suffix + ".sighex")).write_text(sig + "\n", encoding="utf-8")
+        except Exception:
+            pass
+
+    typer.echo(_json.dumps({"village_id": village_id, "format": fmt, "count": count, "sha256": digest, "signed": bool(sig), "path": str(target)}, indent=2))
+
+
+# -----------------------------
+# Registry I/O (Ecosystem)
+# -----------------------------
+registry = typer.Typer(help="Import/export village registry artifacts.")
+app.add_typer(registry, name="registry")
+
+@registry.command("export")
+def registry_export(village_id: str, out: Path = typer.Option(Path("registry_export.json"), help="Output JSON file")):
+    """Export a minimal trust-registry artifact (members, revocations, anchors, policy head)."""
+    from .validate import validate_village_id
+    from .villages import load_village, _members_path, _revocations_path
+    validate_village_id(village_id)
+    root = Path("data")
+    v = load_village(root, village_id)
+    members = _members_path(root, village_id).read_text(encoding="utf-8").splitlines()
+    revocations = _revocations_path(root, village_id).read_text(encoding="utf-8").splitlines()
+    anchors_path = Path("data/store") / "anchors" / village_id / "anchors.jsonl"
+    anchors = []
+    if anchors_path.exists():
+        anchors = [json.loads(l) for l in anchors_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+    payload = {
+        "format": "links.external_registry.v1",
+        "village_id": village_id,
+        "policy": v.policy.model_dump(),
+        "members": [m for m in members if m.strip()],
+        "revocations": [r for r in revocations if r.strip()],
+        "trust_anchors": anchors,
+    }
+    out.write_text(json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True), encoding="utf-8")
+    typer.echo(str(out))
+
+@registry.command("import")
+def registry_import(path: Path):
+    """Import a minimal trust-registry artifact into local data/ (best-effort)."""
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    village_id = payload.get("village_id")
+    from .validate import validate_village_id
+    validate_village_id(village_id)
+    root = Path("data")
+    # write village policy
+    from .villages import save_village, Village
+    v = Village(village_id=village_id, policy=payload.get("policy", {}), capabilities={})
+    save_village(root, v)
+    # members/revocations
+    (root / "villages" / village_id).mkdir(parents=True, exist_ok=True)
+    (root / "villages" / village_id / "members.jsonl").write_text("\n".join(payload.get("members", [])) + "\n", encoding="utf-8")
+    (root / "villages" / village_id / "revocations.jsonl").write_text("\n".join(payload.get("revocations", [])) + "\n", encoding="utf-8")
+    typer.echo(f"Imported village {village_id}")
+
+
+# -----------------------------
+# Drift monitoring
+# -----------------------------
+drift = typer.Typer(help="Drift checks and alert hooks.")
+app.add_typer(drift, name="drift")
+
+@drift.command("check")
+def drift_check(village_id: str, remote_base: str = typer.Option(..., help="Remote node base URL"), webhook: str = typer.Option("", help="Optional webhook URL for alerts")):
+    """Compare local policy head vs remote manifest head and emit a severity classification."""
+    from .validate import validate_village_id
+    from .villages import load_village
+    from .policy_updates import compute_policy_hash
+    validate_village_id(village_id)
+
+    remote = requests.get(f"{remote_base}/villages/{village_id}/policy/manifest", timeout=10)
+    remote.raise_for_status()
+    man = remote.json()
+    remote_head = man.get("head")
+    local_head = None
+    try:
+        v = load_village(Path("data"), village_id)
+        local_head = compute_policy_hash(v.policy.model_dump())
+    except Exception:
+        local_head = None
+
+    drifted = (local_head != remote_head)
+    forks = man.get("forks", []) if isinstance(man, dict) else []
+    severity = "none"
+    if drifted:
+        severity = "high"
+    if forks:
+        severity = "critical"
+
+    report = {"village_id": village_id, "local_head": local_head, "remote_head": remote_head, "drift": drifted, "forks": forks, "severity": severity}
+    typer.echo(json.dumps(report, indent=2))
+
+    if webhook:
+        try:
+            requests.post(webhook, json=report, timeout=10)
+        except Exception:
+            pass
