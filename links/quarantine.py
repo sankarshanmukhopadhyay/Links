@@ -9,6 +9,7 @@ from .store import ingest_bundle_file
 from .audit import write_audit, AuditEvent, policy_hash
 from .villages import load_village, enforce_policy_on_bundle, issuer_key_hash_from_public_key_b64, issuer_allowed
 from .file_lock import locked_open
+from .validate import validate_village_id
 
 
 def quarantine_dir(store_root: Path, village_id: Optional[str]) -> Path:

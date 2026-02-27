@@ -12,6 +12,7 @@ from nacl.exceptions import BadSignatureError
 
 from pydantic import BaseModel
 
+from .validate import validate_village_id
 from .policy_updates import (
     VillagePolicyUpdate,
     verify_update_any,
@@ -26,6 +27,7 @@ from .policy_updates import (
 
 
 def _updates_dir(villages_root: Path, village_id: str) -> Path:
+    validate_village_id(village_id)
     d = villages_root / "villages" / village_id / "policy_updates"
     d.mkdir(parents=True, exist_ok=True)
     return d

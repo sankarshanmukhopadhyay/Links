@@ -19,5 +19,12 @@ dependencies = [
   "pywikibot",
 ]
 
+[project.scripts]
+links = "links.cli:app"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.setuptools]
+packages = ["links"]
+

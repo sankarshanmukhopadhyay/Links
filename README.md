@@ -124,3 +124,21 @@ links policy verify artifacts/policy_update.s2.json
 - Policy versioning and deterministic rollback by prior policy hash
 - Signed policy feed manifests + pagination for large histories
 - Trust anchor registry (register / rotate / revoke) as signed artifacts
+
+
+## Operations
+
+### TLS and exposure
+Links is designed to run **behind a TLS terminator** (Nginx/Envoy/Cloud LB). The built-in server is suitable for dev and controlled environments.
+
+- Binding to non-loopback interfaces will emit a warning in the CLI.
+- Terminate TLS at the edge and forward to Links over a private network.
+
+### Authentication tokens
+If village membership/auth is enabled, use `Authorization: Bearer <token>` for management operations.
+
+### Rate limiting
+Links enforces a basic **in-memory per-village rate limit** using the village policy field `rate_limit_per_min`. For production, enforce rate limiting at the gateway as well.
+
+### Quarantine workflow
+Quarantine approvals **re-check the current village policy** before ingestion. If the policy no longer allows the bundle (predicate/window/issuer constraints), the bundle remains quarantined.

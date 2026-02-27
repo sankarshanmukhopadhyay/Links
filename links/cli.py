@@ -32,7 +32,19 @@ app.add_typer(anchors, name="anchors")
 
 @app.command("serve")
 def serve(host: str = "127.0.0.1", port: int = 8080):
+    import ipaddress
     import uvicorn
+
+    # Operational hardening: if you bind to a non-loopback interface, assume you're behind TLS termination.
+    try:
+        ip = ipaddress.ip_address(host)
+        is_loopback = ip.is_loopback
+    except Exception:
+        is_loopback = host in ("localhost", "127.0.0.1", "::1")
+
+    if not is_loopback:
+        typer.echo("WARNING: Binding to a non-loopback interface. Run Links behind a TLS terminator (e.g., Nginx/Envoy) and use proper auth/rate limiting.", err=True)
+
     uvicorn.run(create_app(), host=host, port=port)
 
 
