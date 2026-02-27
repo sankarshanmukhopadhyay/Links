@@ -4,12 +4,40 @@ This plan converts the current repo into something that can be deployed with few
 
 This plan is derived from the attached evaluation notes and is intended to be applied as a single cohesive increment.
 
+
+## Status
+**Completed:** v0.11.0 baseline shipped (2026-02-27)
+
+This plan is now treated as “done” for the hardening items it covered. Remaining work has been moved into the next increment below.
+
+---
+## Next Increment (draft) — Pull-based Reconciliation + Storage Abstraction
+
+This increment focuses on closing the gap between “signed feeds exist” and “nodes can safely converge”:
+
+### 1) Pull-based policy reconciliation (end-to-end)
+- Implement:
+  - `GET /villages/{id}/policy/latest`
+  - `GET /villages/{id}/policy/updates?since=...` (paged)
+- Add `links policy pull --apply` with deterministic reconciliation rules
+- Produce fork/conflict report artifacts suitable for audit
+
+### 2) Storage abstraction + optional SQLite backend
+- Introduce a pluggable storage interface (JSONL default)
+- Optional SQLite backend behind a feature flag
+- Atomic policy apply transaction boundary (apply + audit + indexes)
+
+### 3) Observability automation
+- Scheduled drift checks (cron-friendly command + example)
+- Signed transparency log checkpoints (periodic snapshot)
+
+
 ## Confirmation checkpoint (before you merge)
 
 Please confirm these scope decisions:
-- [ ] We will prioritize **operational hardening** first (packaging, safe persistence, rate limiting, quarantine re-check, path sanitization, TLS posture).
-- [ ] We will ship **pull-based policy reconciliation** as the *next* increment after this (not bundled into this hardening release).
-- [ ] We accept a pragmatic approach for concurrency: **POSIX file locking** for JSONL (Linux/macOS), with a note to migrate to SQLite later if needed.
+- [x] We prioritized **operational hardening** (packaging, safe persistence, rate limiting, quarantine re-check, path sanitization, TLS posture).
+- [x] We shipped a governance substrate baseline separately (v0.11.0); **full pull-based reconciliation** remains the next increment.
+- [x] We use **POSIX file locking** for JSONL (Linux/macOS), with a note to migrate to SQLite later if needed.
 
 ## Scope — what changes in this increment
 
