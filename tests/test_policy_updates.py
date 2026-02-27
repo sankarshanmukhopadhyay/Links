@@ -1,7 +1,7 @@
 import base64
 from nacl.signing import SigningKey
 
-from links.policy_updates import build_update, sign_update, verify_update, compute_policy_hash
+from links.policy_updates import build_update, sign_update_legacy, verify_update_any, compute_policy_hash
 
 
 def test_policy_update_sign_verify():
@@ -10,10 +10,10 @@ def test_policy_update_sign_verify():
     assert u.policy_hash == compute_policy_hash(policy)
 
     sk = SigningKey.generate()
-    s = sign_update(u, sk)
-    assert verify_update(s) is True
+    s = sign_update_legacy(u, sk)
+    assert verify_update_any(s) is True
 
     # tamper
     t = s.model_copy(deep=True)
     t.policy["max_window_days"] = 999
-    assert verify_update(t) is False
+    assert verify_update_any(t) is False

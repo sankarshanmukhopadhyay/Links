@@ -3,9 +3,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, Header, Query
+import os
+import base64
+from nacl.signing import SigningKey
 
 from .policy_updates import VillagePolicyUpdate, build_update
-from .policy_feed import store_policy_update, latest_policy_update, filter_updates_since, signer_allowed
+from .policy_feed import store_policy_update, latest_policy_update, filter_updates_since, signer_allowed, paginate_updates, list_policy_updates, build_policy_feed_manifest, sign_manifest
 from .validate import validate_village_id
 
 # Optional: if a richer villages module exists, use it for auth + apply.
@@ -41,7 +44,46 @@ def create_app(store_root: Path = Path("data/store"), villages_root: Path = Path
         ups = filter_updates_since(villages_root, village_id, since_hash=since)
         return [json.loads(u.model_dump_json()) for u in ups]
 
-    @app.post("/villages/{village_id}/policy")
+    
+    @app.get("/villages/{village_id}/policy/updates_page")
+    def policy_updates_page(
+        village_id: str,
+        since: str | None = Query(default=None),
+        cursor: str | None = Query(default=None),
+        limit: int = Query(default=100, ge=1, le=500),
+    ):
+        """Paginated policy updates (envelope). Cursor is the last policy_hash from the previous page."""
+        validate_village_id(village_id)
+        ups = filter_updates_since(villages_root, village_id, since_hash=since)
+        items, next_cursor = paginate_updates(ups, cursor=cursor, limit=limit)
+        return {
+            "village_id": village_id,
+            "since": since,
+            "cursor": cursor,
+            "limit": limit,
+            "next_cursor": next_cursor,
+            "items": [json.loads(u.model_dump_json()) for u in items],
+        }
+
+    @app.get("/villages/{village_id}/policy/manifest")
+    def policy_manifest(village_id: str):
+        """Signed policy feed manifest with integrity metadata (merkle root + hash chain head)."""
+        validate_village_id(village_id)
+        m = build_policy_feed_manifest(villages_root, village_id)
+
+        # Optional node signing key (base64 seed). If present, manifests are signed.
+        sk_b64 = os.environ.get("LINKS_NODE_SIGNING_KEY_B64")
+        if sk_b64:
+            try:
+                seed = base64.b64decode(sk_b64.strip())
+                sk = SigningKey(seed[:32])
+                m = sign_manifest(m, sk)
+            except Exception:
+                # Fail open (manifest still returned unsigned) to avoid breaking dev deployments.
+                pass
+
+        return json.loads(m.model_dump_json())
+@app.post("/villages/{village_id}/policy")
     def policy_update(village_id: str, body: dict, authorization: str | None = Header(default=None)):
         validate_village_id(village_id)
 

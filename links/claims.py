@@ -24,8 +24,17 @@ def iso_utc(dt: datetime) -> str:
     return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _json_default(o):
+    from datetime import datetime, timezone
+    if isinstance(o, datetime):
+        if o.tzinfo is None:
+            return o.replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
+        return o.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+    raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
+
+
 def canonical_json(obj: Any) -> bytes:
-    return json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":"), default=_json_default).encode("utf-8")
 
 
 def short_hash(data: bytes, n: int = 32) -> str:
@@ -63,7 +72,10 @@ def bundle_payload_for_signing(bundle: ClaimBundle) -> dict:
 
 
 def compute_bundle_id(payload: dict) -> str:
-    return short_hash(canonical_json(payload), 32)
+    # Deterministic: bundle_id field is treated as blank during hashing
+    p = dict(payload)
+    p["bundle_id"] = ""
+    return short_hash(canonical_json(p), 32)
 
 
 def build_bundle_from_edges(

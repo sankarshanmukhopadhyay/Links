@@ -9,7 +9,11 @@ import requests
 from nacl.signing import SigningKey
 
 from links.server import create_app
-from links.policy_updates import VillagePolicyUpdate, verify_update_any, add_signature, sign_update_legacy
+from links.policy_updates import VillagePolicyUpdate, verify_update_any, add_signature, sign_update_legacy, build_update
+from links.policy_diff import diff_policies
+from links.policy_feed import PolicyFeedManifest, verify_manifest
+from links.reconcile import reconcile
+from links.trust_anchors import TrustAnchorEntry, add_anchor_signature, verify_anchor_entry_any
 from links.policy_feed import signer_allowed
 from links.validate import validate_village_id
 
@@ -21,7 +25,9 @@ except Exception:  # pragma: no cover
 
 app = typer.Typer(help="Links: verifiable claim exchange with group policy controls.")
 policy = typer.Typer(help="Policy feed operations")
+anchors = typer.Typer(help="Trust anchor registry operations")
 app.add_typer(policy, name="policy")
+app.add_typer(anchors, name="anchors")
 
 
 @app.command("serve")
@@ -67,37 +73,70 @@ def policy_verify(inp: Path):
 
 
 @policy.command("pull")
-def policy_pull(url: str, village_id: str, apply: bool = True, since: str = None, token: str = None):
+def policy_pull(url: str, village_id: str, apply: bool = True, since: str = None, token: str = None, page_limit: int = 200):
     """
-    Pull policy updates from a remote node, verify, reconcile, and optionally apply.
-    Reconcile rule: select latest update by (created_at, policy_hash).
+    Pull policy updates from a remote node using:
+      1) Signed manifest (if available)
+      2) Paginated updates (large-history optimization)
+
+    Reconcile rule (default): select latest update by (created_at, policy_hash).
+    Also prints fork detection signals when previous_policy_hash links diverge.
     """
     validate_village_id(village_id)
     base = url.rstrip("/")
-    endpoint = f"{base}/villages/{village_id}/policy/updates"
-    params = {}
-    if since:
-        params["since"] = since
-
     headers = {}
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
-    r = requests.get(endpoint, params=params, headers=headers, timeout=30)
-    r.raise_for_status()
-    updates = [VillagePolicyUpdate.model_validate(u) for u in r.json()]
+    # 1) Fetch manifest (optional but preferred)
+    manifest = None
+    try:
+        mr = requests.get(f"{base}/villages/{village_id}/policy/manifest", headers=headers, timeout=30)
+        if mr.status_code == 200:
+            manifest = mr.json()
+    except Exception:
+        manifest = None
+
+    # 2) Fetch updates (paginated if supported)
+    updates = []
+    try:
+        cursor = None
+        while True:
+            pr = requests.get(
+                f"{base}/villages/{village_id}/policy/updates_page",
+                params={"since": since, "cursor": cursor, "limit": page_limit},
+                headers=headers,
+                timeout=30,
+            )
+            if pr.status_code != 200:
+                raise RuntimeError("updates_page not supported")
+            payload = pr.json()
+            updates.extend([VillagePolicyUpdate.model_validate(u) for u in payload.get("items", [])])
+            cursor = payload.get("next_cursor")
+            if not cursor:
+                break
+    except Exception:
+        # fallback: legacy endpoint
+        endpoint = f"{base}/villages/{village_id}/policy/updates"
+        params = {}
+        if since:
+            params["since"] = since
+        r = requests.get(endpoint, params=params, headers=headers, timeout=30)
+        r.raise_for_status()
+        updates = [VillagePolicyUpdate.model_validate(u) for u in r.json()]
 
     if not updates:
         typer.echo("No updates.")
         raise typer.Exit(code=0)
 
-    # Verify at least one signature if any signature material is present in each update.
+    # Verify signature material (if any) for each update.
     for u in updates:
         has_any = bool(u.signatures) or bool(u.public_key) or bool(u.signature)
         if has_any and not verify_update_any(u):
             typer.echo(f"Invalid signature material for update policy_hash={u.policy_hash}")
             raise typer.Exit(code=1)
 
+    # Reconcile: choose latest
     updates.sort(key=lambda u: (u.created_at, u.policy_hash), reverse=True)
     chosen = updates[0]
 
@@ -114,6 +153,15 @@ def policy_pull(url: str, village_id: str, apply: bool = True, since: str = None
         typer.echo(f"Drift detected: local={local_hash} remote_latest={chosen.policy_hash}")
     else:
         typer.echo(f"Remote latest policy_hash={chosen.policy_hash}")
+
+    # Fork detection (best-effort)
+    try:
+        from links.reconcile import detect_forks
+        forks = detect_forks(updates)
+        if forks:
+            typer.echo(f"Fork signals detected: {len(forks)} (run `links policy reconcile` for full report)")
+    except Exception:
+        pass
 
     if apply and apply_policy_update:
         current_policy = {}
@@ -138,7 +186,6 @@ def policy_pull(url: str, village_id: str, apply: bool = True, since: str = None
     out = out_dir / f"latest.{chosen.policy_hash}.json"
     out.write_text(chosen.model_dump_json(indent=2), encoding="utf-8")
     typer.echo(f"Wrote {out}")
-
 
 @policy.command("drift")
 def policy_drift(url: str, village_id: str, token: str = None):

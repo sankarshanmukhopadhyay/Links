@@ -116,3 +116,11 @@ Verify:
 ```bash
 links policy verify artifacts/policy_update.s2.json
 ```
+
+### Governance upgrades (policy evolution)
+
+- Quorum models: **M-of-N**, **weighted signers**, and **role-based quorum sets**
+- Policy lifecycle: proposal → approval → activation (with activation time/height)
+- Policy versioning and deterministic rollback by prior policy hash
+- Signed policy feed manifests + pagination for large histories
+- Trust anchor registry (register / rotate / revoke) as signed artifacts

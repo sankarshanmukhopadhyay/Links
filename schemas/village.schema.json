@@ -165,7 +165,63 @@
         "policy_signature_threshold_m": {
           "type": "integer",
           "minimum": 1,
-          "description": "M in M-of-N policy signer quorum (required when require_policy_signature=true)."
+          "description": "M in M-of-N policy signer quorum (legacy)."
+        },
+        "policy_quorum": {
+          "type": "object",
+          "description": "Quorum config. model: m_of_n|weighted|role_based. For weighted: threshold_weight. For role_based: role_requirements.",
+          "properties": {
+            "model": {
+              "type": "string"
+            },
+            "threshold_m": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "threshold_weight": {
+              "type": "number"
+            },
+            "role_requirements": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "role",
+                  "min_signers"
+                ],
+                "properties": {
+                  "role": {
+                    "type": "string"
+                  },
+                  "min_signers": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "policy_signer_weights": {
+          "type": "object",
+          "description": "Key-hash -> weight mapping for weighted quorum",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "policy_signer_roles": {
+          "type": "object",
+          "description": "Key-hash -> roles mapping for role-based quorum",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "require_quorum_metadata": {
+          "type": "boolean",
+          "description": "If true, policy update artifacts must include quorum metadata."
         }
       }
     }

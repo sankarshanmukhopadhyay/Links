@@ -1,27 +1,23 @@
-[build-system  "typer>=0.9",
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "links"
+version = "0.10.0"
+description = "Links: verifiable claim exchange with group policy controls"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+  "typer>=0.9",
   "pydantic>=2.0",
   "networkx>=3.0",
   "pynacl>=1.5",
   "fastapi>=0.110",
   "uvicorn>=0.23",
   "requests>=2.31",
+  "pywikibot",
 ]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
 
-[project]
-name = "links"
-version = "0.9.0"
-description = "Python scripts for Links repo"
-readme = "README.md"
-requires-python = ">=3.8"
-dependencies = ["pywikibot"]
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[project.scripts]
-links = "links.cli:app"
-
-[tool.setuptools]
-packages = ["links"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]

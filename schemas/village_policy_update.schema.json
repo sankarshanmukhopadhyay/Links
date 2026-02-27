@@ -50,6 +50,83 @@
           }
         }
       }
+    },
+    "policy_version_id": {
+      "type": "string"
+    },
+    "lifecycle_state": {
+      "type": "string"
+    },
+    "previous_policy_hash": {
+      "type": "string"
+    },
+    "rollback_to_policy_hash": {
+      "type": "string"
+    },
+    "activation_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "activation_height": {
+      "type": "integer"
+    },
+    "quorum": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "threshold_m": {
+          "type": "integer"
+        },
+        "threshold_weight": {
+          "type": "number"
+        },
+        "signer_set_hash": {
+          "type": "string"
+        },
+        "role_requirements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "role",
+              "min_signers"
+            ],
+            "properties": {
+              "role": {
+                "type": "string"
+              },
+              "min_signers": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "change_summary": {
+      "type": "object",
+      "properties": {
+        "added": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "changed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }

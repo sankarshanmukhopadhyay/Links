@@ -18,3 +18,49 @@ Bearer tokens authenticate an operator. Signatures add:
 - Require signatures in higher risk deployments (`require_policy_signature=true`).
 - Restrict policy signers (`policy_signer_allowlist`) to an explicit set of keys.
 - Log and review all policy changes via the audit log.
+
+
+## Quorum governance enhancements (vNext)
+
+This repo now supports **three policy-approval quorum models**, driven by village policy config:
+
+1. **M-of-N (legacy)**  
+   - `require_policy_signature=true`
+   - `policy_signature_threshold_m=M`
+   - `policy_signer_allowlist=[key_hash,...]`
+
+2. **Weighted quorum**  
+   - `policy_quorum.model="weighted"`
+   - `policy_quorum.threshold_weight=...`
+   - `policy_signer_weights={ key_hash: weight, ... }`
+
+3. **Role-based quorum sets**  
+   - `policy_quorum.model="role_based"`
+   - `policy_quorum.role_requirements=[{"role":"core","min_signers":1},{"role":"external","min_signers":1}]`
+   - `policy_signer_roles={ key_hash: ["core"], ... }`
+
+### Quorum metadata inside update artifacts
+
+Policy update artifacts can embed a `quorum` object (signed) so auditors can see *what quorum model and thresholds* were intended for the change.
+Operators that want strictness can set `require_quorum_metadata=true` in the village policy and enforce it during review.
+
+## Policy change lifecycle + versioning
+
+Policy updates support lifecycle states:
+
+- `proposal` → `approved` → `active`
+
+And versioning/rollback metadata:
+
+- `policy_version_id` (defaults to `policy_hash`)
+- `previous_policy_hash` (links the chain)
+- `rollback_to_policy_hash` (explicit rollback intent)
+- `activation_time` / `activation_height` (activation semantics)
+
+## Policy diff tooling
+
+The CLI can compute a structured diff summary between two policy JSON files:
+
+- `links policy diff old.json new.json`
+
+This emits a machine-readable summary (`added`, `removed`, `changed` JSON pointer paths) that can be embedded in policy update artifacts as `change_summary`.
