@@ -10,6 +10,13 @@ Links is a small-footprint system for producing **verifiable, inspectable claim 
 - **Quarantine**: a review workflow for policy failures
 - **Audit log**: append-only operational trace of decisions
 
+## Project docs
+
+- Roadmap: [`ROADMAP.md`](./ROADMAP.md)
+- Next increment plan: [`docs/NEXT_INCREMENT_PLAN.md`](./docs/NEXT_INCREMENT_PLAN.md)
+- Policy governance: [`docs/policy-governance.md`](./docs/policy-governance.md)
+
+
 ## Install
 
 ```bash

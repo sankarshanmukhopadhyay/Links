@@ -34,7 +34,7 @@ Please confirm these scope decisions:
 - Improve TLS posture: warn when binding to non-loopback; document “run behind TLS terminator” expectation.
 
 ### E. Documentation cleanup
-- Ensure README contains **no internal project-management terms** (phases/MVP/etc).
+- Ensure README contains **no internal project-management terms** (phases/baseline/etc).
 - Add operational notes for TLS, tokens, rate limiting, and quarantine.
 
 ## Follow-on increment (planned, not implemented here)
