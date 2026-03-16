@@ -21,6 +21,53 @@ PolicyMesh is a small-footprint system for producing **verifiable, inspectable c
 - Governance risk crosswalk: [`docs/risk-crosswalk.md`](./docs/risk-crosswalk.md)
 - Upstream snapshot notes: [`upstream/UPSTREAM_SNAPSHOT.md`](./upstream/UPSTREAM_SNAPSHOT.md)
 
+## Transparency and federation (v0.14.0)
+
+### Capability manifest
+
+```python
+from links.capability_manifest import build_manifest, write_manifest
+from pathlib import Path
+
+manifest = build_manifest(
+    node_id="node.example.org",
+    storage_mode="sqlite",
+    reconciliation_mode="lineage_aware",
+    transparency_features=["http_publish", "signed_checkpoint"],
+    federation_pilot=True,
+)
+write_manifest(Path("artifacts/capability_manifest.json"), manifest)
+```
+
+### Checkpoint signing and peer comparison
+
+```python
+from nacl.signing import SigningKey
+from links.checkpoint_exchange import sign_checkpoint, fetch_peer_checkpoint, compare_checkpoints
+
+sk = SigningKey.generate()
+signed = sign_checkpoint(local_checkpoint, sk)
+
+peer = fetch_peer_checkpoint("https://peer.example.org", "ops")
+report = compare_checkpoints(signed, peer)
+print(report.drift_class)   # "aligned" | "publication_lag" | "policy_divergence" | ...
+print(report.notes)
+```
+
+### Drift class taxonomy
+
+```python
+from links.drift_classes import classify_checkpoint_drift, DRIFT_CLASS_OPERATOR_RESPONSE
+
+drift_class, notes = classify_checkpoint_drift(
+    local_policy_hash=local_hash,
+    peer_policy_hash=peer_hash,
+    local_entry_count=local_count,
+    peer_entry_count=peer_count,
+)
+print(DRIFT_CLASS_OPERATOR_RESPONSE[drift_class])
+```
+
 ## Install
 
 ```bash
@@ -152,11 +199,18 @@ links policy verify artifacts/policy_update.s2.json
 - signed feed manifests with policy-pinned trust evaluation and deep-history parent-chain recovery
 - transparency and audit signing workflows for production operations
 
+#### Delivered in v0.14.0
+
+- transparency checkpoint signing, publication, and peer comparison (`links.checkpoint_exchange`)
+- drift class taxonomy distinguishing policy divergence from publication lag (`links.drift_classes`)
+- machine-readable capability declarations with compatibility checks (`links.capability_manifest`)
+- JSON Schema for capability manifests (`schemas/capability_manifest.schema.json`)
+- operator acceptance criteria for small-federation pilots
+
 #### Next priorities
 
 - weighted or role-based quorum operationalization beyond the current artifact model
-- transparency publication over HTTP and stronger checkpoint exchange workflows
-- machine-readable capability declarations and operator acceptance criteria for federation pilots
+- live HTTP endpoint for capability manifest and checkpoint serving
 - broader SDK stabilization and ecosystem integration work
 
 ## Operations

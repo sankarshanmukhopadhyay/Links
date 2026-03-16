@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://policymesh.dev/schemas/capability_manifest.schema.json",
+  "title": "PolicyMesh Capability Manifest",
+  "description": "Machine-readable declaration of what a PolicyMesh node supports. Used by peers, federation pilots, and operators to make programmatic compatibility decisions.",
+  "type": "object",
+  "required": ["schema_version", "node_id", "generated_at", "storage_mode", "reconciliation_mode"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Version of the capability manifest schema itself.",
+      "const": "1.0"
+    },
+    "node_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable human-readable identifier for the node, e.g. a hostname or org-scoped name."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp at which this manifest was generated."
+    },
+    "storage_mode": {
+      "type": "string",
+      "enum": ["filesystem", "sqlite"],
+      "description": "Active storage backend for this node."
+    },
+    "reconciliation_mode": {
+      "type": "string",
+      "enum": ["lineage_aware", "latest_wins"],
+      "description": "Pull reconciliation strategy in effect. 'lineage_aware' is the recommended production posture."
+    },
+    "transparency_features": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Transparency capability tokens active on this node, e.g. 'http_publish', 'signed_checkpoint', 'peer_compare'."
+    },
+    "stable_features": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Capability tokens for features on the stable, production-supported surface."
+    },
+    "experimental_features": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Capability tokens for experimental surfaces that may change without notice."
+    },
+    "federation_pilot": {
+      "type": "boolean",
+      "description": "Whether this node has accepted the operator acceptance criteria for small-federation pilots."
+    },
+    "operator_notes": {
+      "type": "string",
+      "description": "Free-text notes for human readers. Not parsed by consumers."
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Vendor or deployment-specific metadata. Contents are not validated by this schema.",
+      "additionalProperties": true
+    },
+    "manifest_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 hex digest of the canonical manifest body (all fields except manifest_hash itself, JSON-serialised with sorted keys and no whitespace). Used for integrity verification."
+    }
+  }
+}

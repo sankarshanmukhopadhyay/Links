@@ -8,7 +8,7 @@ It is intentionally schedule-free. Items move forward based on architectural rea
 - 🟡 Partial
 - 🔜 Planned
 
-_Last updated: 2026-03-14_
+_Last updated: 2026-03-16_
 
 ---
 
@@ -76,8 +76,10 @@ _Last updated: 2026-03-14_
 
 ### 3.3 Governance Transparency
 **Status:** 🟡 Partial
-- Signed transparency log support
+- Signed transparency log support ✅
 - Reproducible policy history snapshots and checkpoints ✅
+- Signed checkpoint publication and peer comparison ✅
+- Drift class taxonomy (policy divergence vs. publication lag) ✅
 - Read-only public policy endpoint hardening
 
 ---
@@ -151,4 +153,6 @@ _Last updated: 2026-03-14_
 - Python SDK wrapper
 - Minimal HTTP client library
 - Example integration materials
-- Clearer separation between stable and experimental SDK surfaces
+- Clearer separation between stable and experimental SDK surfaces ✅
+- Machine-readable capability declarations with JSON Schema ✅
+- Operator acceptance criteria for small-federation pilots ✅

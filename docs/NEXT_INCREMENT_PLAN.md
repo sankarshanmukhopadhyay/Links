@@ -1,43 +1,43 @@
-# Next Increment Plan — Transparency Exchange and Capability Surfacing
+# Next Increment Plan — Live Endpoints, Quorum Operationalization, and SDK Stabilization
 
-The prior increment delivered policy-pinned manifest trust, fail-closed pull controls, replay-safe parent-chain retrieval, and deeper pull-path tests.
+The prior increment (v0.14.0) delivered transparency checkpoint signing and publication, a formal drift class taxonomy, and machine-readable capability declarations. All three modules have full test coverage and are independently usable.
 
 ## Objective
 
-Extend PolicyMesh from a federation-capable pull substrate toward a more legible and more exchangeable operator posture.
+Advance from library-level capability to operator-visible, protocol-level surfaces. The three new modules need server integration points, and the quorum governance work needs to move from artifact-level scaffolding toward operational enforcement.
 
 ---
 
-## Priority 1: Transparency publication patterns
+## Priority 1: Live HTTP endpoints for transparency and capability
 
 ### Target outcomes
-- Publish checkpoint artifacts over HTTP for peer comparison.
-- Add digest signing for checkpoint payloads.
-- Document operator workflows for exchanging checkpoints across nodes.
+- Add `GET /villages/{village_id}/transparency/checkpoint` to `server.py` so `fetch_peer_checkpoint` has a real target.
+- Add `GET /nodes/capability` to serve the node's capability manifest over HTTP for peer discovery.
+- Document the endpoint contract and add integration tests against a `TestClient`.
 
 ---
 
-## Priority 2: Assurance and conformance surfacing
+## Priority 2: Quorum operationalization
 
 ### Target outcomes
-- Add machine-readable capability declarations for storage mode, reconciliation mode, and transparency features.
-- Expand docs to cleanly separate production-supported from experimental features.
-- Add operator-facing acceptance criteria for small-federation pilots.
+- Enforce weighted and role-based quorum checks at policy apply time, not just at verification time.
+- Add operator-facing CLI for quorum inspection: which signers have signed, what weight total has been reached, what role requirements are met.
+- Expand `docs/policy-governance.md` with worked examples for weighted and role-based quorum setups.
 
 ---
 
-## Priority 3: Federation comparison workflows
+## Priority 3: SDK stabilization and surface documentation
 
 ### Target outcomes
-- Add peer-to-peer checkpoint comparison tooling.
-- Surface drift classes that distinguish policy divergence from publication lag.
-- Add operator guidance for recovery after asymmetric history availability.
+- Publish a machine-readable surface map distinguishing stable, experimental, and internal-only modules.
+- Add a `links.sdk` façade that re-exports the stable public API surface with stable import paths.
+- Document breaking-change policy for the stable surface.
 
 ---
 
 ## Explicit non-goals for this increment
 
-- broad SDK expansion
-- unrelated schema churn
-- speculative standards work without operational payoff
-- large architectural rewrites disconnected from operator adoption
+- Large architectural rewrites
+- New storage backends beyond filesystem and SQLite
+- Speculative standards work without a concrete operator use case
+- Broad schema churn unrelated to the endpoint or quorum work
